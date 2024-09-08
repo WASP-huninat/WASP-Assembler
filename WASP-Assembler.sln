@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WASP-Assembler", "WASP-Assembler\WASP-Assembler.csproj", "{B24E05C8-76A9-4587-8BF4-041AD257A962}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Assembler", "Assembler\Assembler.csproj", "{FCDFAC96-1D80-42EE-9BEA-2AA4562DED2E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F58294A1-3A55-4C93-9A9A-02CC820C61AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B24E05C8-76A9-4587-8BF4-041AD257A962}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B24E05C8-76A9-4587-8BF4-041AD257A962}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B24E05C8-76A9-4587-8BF4-041AD257A962}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B24E05C8-76A9-4587-8BF4-041AD257A962}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCDFAC96-1D80-42EE-9BEA-2AA4562DED2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCDFAC96-1D80-42EE-9BEA-2AA4562DED2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCDFAC96-1D80-42EE-9BEA-2AA4562DED2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCDFAC96-1D80-42EE-9BEA-2AA4562DED2E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DD02DAF7-35EB-49A9-9344-0CD71FB55077}
+	EndGlobalSection
+EndGlobal
