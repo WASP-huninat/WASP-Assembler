@@ -6,6 +6,7 @@ namespace WASP_Assembler
     {
         IAssemblerLogic _IAssemblerLogic = new AssemblerLogic();
         private string? selectedAssembler = null;
+        private string? tempFilePath = null;
 
         public Form1()
         {
@@ -14,10 +15,13 @@ namespace WASP_Assembler
             ui1.SetHeight((int)(ui1.Parent.Height - 6 - tableLayoutPanel1.RowStyles[0].Height - tableLayoutPanel1.RowStyles[2].Height));
             ui2.SetHeight((int)(ui2.Parent.Height - 6 - tableLayoutPanel1.RowStyles[0].Height - tableLayoutPanel1.RowStyles[2].Height));
 
+            tempFilePath = Path.Combine(Path.GetTempPath(), "WASP-Assembler");
 
-            foreach (var isaFile in Directory.EnumerateFiles("D:\\temp\\"))
+            Directory.CreateDirectory(tempFilePath);
+
+            foreach (var isaFile in Directory.EnumerateFiles(tempFilePath))
             {
-                Selected_Assembler.DropDownItems.Add(isaFile.Replace("D:\\temp\\", ""));
+                Selected_Assembler.DropDownItems.Add(isaFile.Replace($"{tempFilePath}\\", ""));
             }
         }
 

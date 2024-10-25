@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Security.Cryptography;
 
 namespace Assembler
 {
@@ -78,6 +79,10 @@ namespace Assembler
             List<string> operant = new List<string>();
             for (int i = 1; i < splittedAssembly.Count; i++)
             {
+                if (splittedAssembly[i].StartsWith('#'))
+                {
+                    splittedAssembly[i] = ConvertDecimalToBinary(splittedAssembly[i].Replace("#", ""), (int)char.GetNumericValue(assembly.Parameter_Order[i - 1][1]));
+                }
                 operant.Add(splittedAssembly[i]);
             }
 
@@ -134,8 +139,15 @@ namespace Assembler
                     break;
                 case List<string> when operant[operantId].Length == Convert.ToInt32(assembly.Parameter_Order[operantId][1..]):
                     {
+                        try
+                        {
                         output = operant[operantId][CountOfSpecificChars[CountOfSpecificCharElementNumber]];
                         CountOfSpecificChars[CountOfSpecificCharElementNumber]++;
+                        }
+                        catch (Exception)
+                        {
+                            output = '/';
+                        }
                     };
                     break;
                 case List<string> when operant[operantId].Length < Convert.ToInt32(assembly.Parameter_Order[operantId][1..]):
@@ -151,16 +163,57 @@ namespace Assembler
             return output;
         }
 
-        private string ConvertDecimalToBinary(string decimalNumber)
+        private string ConvertDecimalToBinary(string decimalNumber, int bitCount)
         {
             string output = "";
             int x = Convert.ToInt32(decimalNumber);
-            for (int i = 1; i < Convert.ToInt32(ISAClass.Instruction_Bits) - 1; i++)
+
+            //  match with base 2 Numbers
+            //  starting at 2 until end of integer limit
+            for (int i = bitCount - 1; i > 0; i--)
             {
-                int bitvalue = 2 ^ i;
-                output += (x > bitvalue) ? 1 : 0;
+                int bitvalue = (int)Math.Pow(2, i);
+
+                if (bitvalue <= x)
+                {
+                    x -= bitvalue;
+                    output += 1;
+                }
+                else
+                {
+                    output += 0;
+                }
             }
-            return "t";
+
+            //  Chck if the Least Significant Bit is on
+            if (x == 1)
+            {
+                x -= 1;
+                output += 1;
+            }
+            else if (x == 0)
+            {
+                output += 0;
+            }
+
+            //  if the Value is bigger than the maximum bit add 00 at the end so that an error is shown
+            if (ISAClass.Most_Significant_Bit == "left" && x > 0)
+            {
+                output += "00";
+            }
+
+            //  if the Value is smaller than the minimum bit add null at the end so that an error is shown
+            if (ISAClass.Most_Significant_Bit == "right")
+            {
+                if (x > 1)
+                {
+                    output += "";
+                }
+
+                //  Inverts the bin string to set the MSB on the right side
+                output = new string (output.Reverse().ToArray());
+            }
+            return output;
         }
     }
 }
