@@ -163,6 +163,7 @@
             // 
             // StartAssembleButto
             // 
+            StartAssembleButto.BackColor = Color.DarkGreen;
             StartAssembleButto.DisplayStyle = ToolStripItemDisplayStyle.Text;
             StartAssembleButto.ForeColor = Color.Gainsboro;
             StartAssembleButto.ImageTransparentColor = Color.Magenta;
