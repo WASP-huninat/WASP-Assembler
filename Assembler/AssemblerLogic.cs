@@ -1,11 +1,10 @@
 ﻿using Newtonsoft.Json;
-using System.Security.Cryptography;
 
 namespace Assembler
 {
     public class AssemblerLogic : IAssemblerLogic
     {
-        private AssemblerJsonClass.Assembly_Instuctions assembly;
+        private AssemblerJsonClass.Assembly_Instructions assembly;
         private AssemblerJsonClass.Rootobject? ISAClass = null;
         private List<string> splittedAssembly = new List<string>();
         private int operantId;
@@ -38,31 +37,31 @@ namespace Assembler
                 splittedAssembly = AssemblyInput[i].Split(' ', '\t').ToList();
                 // Step over every line in the .json file
                 int j = 0;
-                for (; j < ISAClass.Assembly_Instuctions.Length; j++)
+                for (; j < ISAClass.Assembly_Instructions.Length; j++)
                 {
                     // Ignoring empty lines and Comments
                     if (AssemblyInput[i] == "" || AssemblyInput[i].StartsWith("//"))
                     {
                         OutputString += Environment.NewLine;
-                        j = ISAClass.Assembly_Instuctions.Length + 1;
+                        j = ISAClass.Assembly_Instructions.Length + 1;
                     }
 
                     // chek if the assembly operation is in the .json file
-                    else if (splittedAssembly[0].ToString().ToUpper() == ISAClass.Assembly_Instuctions[j].Assembly_Mnemotic.ToUpper())
+                    else if (splittedAssembly[0].ToString().ToUpper() == ISAClass.Assembly_Instructions[j].Assembly_Mnemotic.ToUpper())
                     {
                         if (OutputString.Length > 0)
                         {
                             OutputString += Environment.NewLine;
                         }
 
-                        assembly = ISAClass.Assembly_Instuctions[j];
+                        assembly = ISAClass.Assembly_Instructions[j];
                         OutputString += OperantToMicrocode();
-                        j = ISAClass.Assembly_Instuctions.Length + 1;
+                        j = ISAClass.Assembly_Instructions.Length + 1;
                     }
                 }
 
                 // output if no assembly operation was found
-                if (j != ISAClass.Assembly_Instuctions.Length + 2)
+                if (j != ISAClass.Assembly_Instructions.Length + 2)
                 {
                     if (OutputString.Length > 0)
                     {
@@ -81,7 +80,7 @@ namespace Assembler
             {
                 if (splittedAssembly[i].StartsWith('#'))
                 {
-                    splittedAssembly[i] = ConvertDecimalToBinary(splittedAssembly[i].Replace("#", ""), (int)char.GetNumericValue(assembly.Parameter_Order[i - 1][1]));
+                    splittedAssembly[i] = ConvertDecimalToBinary(splittedAssembly[i].Replace("#", ""), int.Parse(assembly.Parameter_Order[i - 1][1..]));
                 }
                 operant.Add(splittedAssembly[i]);
             }
@@ -132,7 +131,7 @@ namespace Assembler
             switch (operant)
             {
                 case List<string> when operant.Count < assembly.Parameter_Order.Length:
-                    output = '#';
+                    output = '≠';
                     break;
                 case List<string> when operant[operantId].Length == 0:
                     output = '-';
