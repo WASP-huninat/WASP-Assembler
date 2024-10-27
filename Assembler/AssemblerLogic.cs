@@ -75,6 +75,15 @@ namespace Assembler
 
         private string OperantToMicrocode()
         {
+            if (assembly.Parameter_Order.Length > splittedAssembly.Count - 1)
+            {
+                return "Not enough operators for this instruction";
+            }
+            else if (assembly.Parameter_Order.Length < splittedAssembly.Count - 1)
+            {
+                return "Too many operators for this instruction";
+            }
+
             List<string> operant = new List<string>();
             for (int i = 1; i < splittedAssembly.Count; i++)
             {
@@ -130,9 +139,6 @@ namespace Assembler
             char output;
             switch (operant)
             {
-                case List<string> when operant.Count < assembly.Parameter_Order.Length:
-                    output = '≠';
-                    break;
                 case List<string> when operant[operantId].Length == 0:
                     output = '-';
                     break;
