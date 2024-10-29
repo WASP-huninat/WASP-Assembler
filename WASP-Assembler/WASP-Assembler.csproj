@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <Reference Include="WASP_huninat.WinForms.CustomControls">
-      <HintPath>C:\Users\huninat\source\repos\WASP-huninat\WASP_huninat.WinForms.CustomControls\bin\Release\net8.0-windows\WASP_huninat.WinForms.CustomControls.dll</HintPath>
+      <HintPath>..\..\WASP_huninat.WinForms.CustomControls\bin\Release\net8.0-windows\WASP_huninat.WinForms.CustomControls.dll</HintPath>
     </Reference>
   </ItemGroup>
 
