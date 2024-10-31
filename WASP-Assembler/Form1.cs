@@ -1,14 +1,14 @@
-using Assembler;
-
+﻿using Assembler;
 namespace WASP_Assembler
 {
-    public partial class Form1 : Form
+    public partial class WASPAssemblerIDE : Form
     {
-        IAssemblerLogic _IAssemblerLogic = new AssemblerLogic();
-        private string? selectedAssembler = null;
-        private string tempFilePath;
+        readonly IAssemblerLogic _IAssemblerLogic = new AssemblerLogic();
+        private string? selectedAssembler;
+        private readonly string tempFilePath = Path.Combine(Path.GetTempPath(), "WASP-Assembler");
+        private readonly string tempProjectFilePath = Path.Combine(Path.GetTempPath(), "WASP-Assembler", "Projects");
 
-        public Form1()
+        public WASPAssemblerIDE()
         {
             InitializeComponent();
         }
@@ -16,14 +16,35 @@ namespace WASP_Assembler
         private void Form1_Load(object sender, EventArgs e)
         {
             SetCustomUiHeight();
-
-            tempFilePath = Path.Combine(Path.GetTempPath(), "WASP-Assembler");
-            Directory.CreateDirectory(Path.Combine(tempFilePath, "Projects"));
+            // Create File Structure
+            Directory.CreateDirectory(tempProjectFilePath);
             File.WriteAllText(Path.Combine(tempFilePath, "Example.json"), "{\r\n\t\"Instruction_Bits\": \"16\",\r\n\t\"Most_Significant_Bit\": \"left\",\r\n\t\"Assembly_Instructions\": [\r\n\t\t{\r\n\t\t\t\"Assembly_Mnemotic\": \"NOP\",\r\n\t\t\t\"Parameter_Order\": [],\r\n\t\t\t//\t\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16\r\n\t\t\t\"Binary\": [\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"]\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"Assembly_Mnemotic\": \"JMP\",\r\n\t\t\t\"Parameter_Order\": [\"A5\"],\r\n\t\t\t//\t\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16\r\n\t\t\t\"Binary\": [\"0\",\"0\",\"0\",\"0\",\"0\",\"1\",\"0\",\"0\",\"0\",\"0\",\"0\",\"A\",\"A\",\"A\",\"A\",\"A\"]\r\n\t\t},\t\t{\r\n\t\t\t\"Assembly_Mnemotic\": \"ADD\",\r\n\t\t\t\"Parameter_Order\": [\"Z3\",\"Y3\",\"X3\"],\r\n\t\t\t//\t\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16\r\n\t\t\t\"Binary\": [\"0\",\"0\",\"0\",\"0\",\"1\",\"1\",\"1\",\"Z\",\"Z\",\"Z\",\"X\",\"X\",\"X\",\"Y\",\"Y\",\"Y\"]\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"Assembly_Mnemotic\": \"\",\r\n\t\t\t\"Parameter_Order\": [],\r\n\t\t\t//\t\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16\r\n\t\t\t\"Binary\": [\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"]\r\n\t\t}\r\n\t]\r\n}");
 
+            // Adds all assembly definition files to the Selected_Assembler Dropdown
             foreach (var isaFile in Directory.EnumerateFiles(tempFilePath))
             {
-                Selected_Assembler.DropDownItems.Add(isaFile.Replace($"{tempFilePath}\\", ""));
+                Selected_Assembler.DropDownItems.Add(isaFile.Replace($"{tempFilePath}\\", "")).BackColor = Color.FromArgb(50, 0, 0);
+            }
+
+            // Adds all Projects To the TreeView
+            foreach (string item in Directory.EnumerateFileSystemEntries(tempProjectFilePath))
+            {
+                string Name = Path.GetFileName(item);
+                if (File.GetAttributes(item) == FileAttributes.Directory)
+                {
+                    // Get all files in one folder and adds to ChildNode list
+                    List<TreeNode> ChildNodes = new List<TreeNode>();
+                    foreach (var item1 in Directory.EnumerateFiles(item))
+                    {
+                        ChildNodes.Add(new TreeNode($"🖹{Path.GetFileName(item1)}"));
+                    }
+                    // Add File Nods to the correct Parent Node
+                    ProjectTreeView.Nodes.Add(new TreeNode($"📁{Name}", ChildNodes.ToArray()));
+                }
+                else
+                {
+                    ProjectTreeView.Nodes.Add($"🖹{Name}");
+                }
             }
         }
 
@@ -47,9 +68,33 @@ namespace WASP_Assembler
         private void SetCustomUiHeight()
         {
             int temp = splitContainer2.Panel1.Height - AssemblyCodeLbl.Height - 4;
-            ProjectTreeView.Height = temp;
+            ProjectTreeView.Height = temp - CurrentProjectLbl.Height;
             AssemblyCodeUi.Height = temp;
             MachineCodeUi.Height = temp;
+        }
+
+        private void ProjectTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Node.ToString().EndsWith(".txt"))
+            {
+                string nodePath = Path.Combine(tempProjectFilePath, e.Node.FullPath.Replace("📁", "").Replace("🖹", ""));
+                AssemblyCodeUi.Text = File.ReadAllText(nodePath);
+
+                if (e.Node.Parent != null)
+                {
+                    CurrentProjectLbl.Text = e.Node.Parent.Text.Replace("📁", "") + ": " + e.Node.Text.Replace("🖹", "");
+                }
+                else
+                {
+                    CurrentProjectLbl.Text = e.Node.Text.Replace("🖹", "");
+                }
+            }
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            string[] path = CurrentProjectLbl.Text.Split(": ");
+            File.WriteAllText(Path.Combine(tempProjectFilePath, path[0].ToString(), path[1].ToString()), AssemblyCodeUi.Text);
         }
     }
 }
