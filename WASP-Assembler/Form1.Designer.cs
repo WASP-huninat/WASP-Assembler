@@ -31,16 +31,15 @@
             AssemblyCodeLbl = new Label();
             AssemblyCodeUi = new WASP_huninat.WinForms.CustomControls.RtbWithLineNumbers.UI();
             ProjectTreeView = new TreeView();
-            ProjectLbl = new Label();
             toolStrip1 = new ToolStrip();
             Selected_Assembler = new ToolStripDropDownButton();
             StartAssembleButto = new ToolStripButton();
+            toolStripButton1 = new ToolStripButton();
             splitContainer1 = new SplitContainer();
             CurrentProjectLbl = new Label();
             splitContainer2 = new SplitContainer();
             MachineCodeUi = new WASP_huninat.WinForms.CustomControls.RtbWithLineNumbers.UI();
             MachineCodeLbl = new Label();
-            toolStripButton1 = new ToolStripButton();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -85,27 +84,12 @@
             ProjectTreeView.FullRowSelect = true;
             ProjectTreeView.Indent = 20;
             ProjectTreeView.ItemHeight = 20;
-            ProjectTreeView.LabelEdit = true;
             ProjectTreeView.LineColor = Color.FromArgb(28, 173, 240);
-            ProjectTreeView.Location = new Point(0, 66);
+            ProjectTreeView.Location = new Point(0, 36);
             ProjectTreeView.Name = "ProjectTreeView";
-            ProjectTreeView.Size = new Size(200, 278);
+            ProjectTreeView.Size = new Size(200, 308);
             ProjectTreeView.TabIndex = 0;
             ProjectTreeView.NodeMouseDoubleClick += ProjectTreeView_NodeMouseDoubleClick;
-            // 
-            // ProjectLbl
-            // 
-            ProjectLbl.BackColor = Color.FromArgb(64, 64, 64);
-            ProjectLbl.Dock = DockStyle.Top;
-            ProjectLbl.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            ProjectLbl.ForeColor = Color.White;
-            ProjectLbl.Location = new Point(0, 0);
-            ProjectLbl.Margin = new Padding(3);
-            ProjectLbl.Name = "ProjectLbl";
-            ProjectLbl.Size = new Size(200, 30);
-            ProjectLbl.TabIndex = 0;
-            ProjectLbl.Text = "Current Project:";
-            ProjectLbl.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // toolStrip1
             // 
@@ -145,6 +129,16 @@
             StartAssembleButto.Text = "Assemble";
             StartAssembleButto.Click += StartAssembleButto_Click;
             // 
+            // toolStripButton1
+            // 
+            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton1.ForeColor = Color.White;
+            toolStripButton1.ImageTransparentColor = Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new Size(123, 32);
+            toolStripButton1.Text = "Save Current File";
+            toolStripButton1.Click += toolStripButton1_Click;
+            // 
             // splitContainer1
             // 
             splitContainer1.BackColor = Color.FromArgb(28, 173, 240);
@@ -155,9 +149,8 @@
             // splitContainer1.Panel1
             // 
             splitContainer1.Panel1.BackColor = Color.Transparent;
-            splitContainer1.Panel1.Controls.Add(CurrentProjectLbl);
             splitContainer1.Panel1.Controls.Add(ProjectTreeView);
-            splitContainer1.Panel1.Controls.Add(ProjectLbl);
+            splitContainer1.Panel1.Controls.Add(CurrentProjectLbl);
             splitContainer1.Panel1.RightToLeft = RightToLeft.No;
             // 
             // splitContainer1.Panel2
@@ -174,11 +167,12 @@
             CurrentProjectLbl.Dock = DockStyle.Top;
             CurrentProjectLbl.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             CurrentProjectLbl.ForeColor = Color.White;
-            CurrentProjectLbl.Location = new Point(0, 30);
+            CurrentProjectLbl.Location = new Point(0, 0);
             CurrentProjectLbl.Margin = new Padding(3);
             CurrentProjectLbl.Name = "CurrentProjectLbl";
             CurrentProjectLbl.Size = new Size(200, 30);
-            CurrentProjectLbl.TabIndex = 1;
+            CurrentProjectLbl.TabIndex = 0;
+            CurrentProjectLbl.Text = "Current Project:";
             CurrentProjectLbl.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // splitContainer2
@@ -228,16 +222,6 @@
             MachineCodeLbl.Text = "Machine code";
             MachineCodeLbl.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // toolStripButton1
-            // 
-            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton1.ForeColor = Color.White;
-            toolStripButton1.ImageTransparentColor = Color.Magenta;
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new Size(123, 32);
-            toolStripButton1.Text = "Save Current File";
-            toolStripButton1.Click += toolStripButton1_Click;
-            // 
             // WASPAssemblerIDE
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -268,7 +252,6 @@
 
         #endregion
         private ToolStrip toolStrip1;
-        private Label ProjectLbl;
         private Label AssemblyCodeLbl;
         private TreeView ProjectTreeView;
         private ToolStripDropDownButton Selected_Assembler;
@@ -278,7 +261,7 @@
         private SplitContainer splitContainer2;
         private WASP_huninat.WinForms.CustomControls.RtbWithLineNumbers.UI MachineCodeUi;
         private Label MachineCodeLbl;
-        private Label CurrentProjectLbl;
         private ToolStripButton toolStripButton1;
+        private Label CurrentProjectLbl;
     }
 }

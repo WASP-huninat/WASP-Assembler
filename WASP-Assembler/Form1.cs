@@ -7,6 +7,7 @@ namespace WASP_Assembler
         private string? selectedAssembler;
         private readonly string tempFilePath = Path.Combine(Path.GetTempPath(), "WASP-Assembler");
         private readonly string tempProjectFilePath = Path.Combine(Path.GetTempPath(), "WASP-Assembler", "Projects");
+        private TreeNode lastChangedNode;
 
         public WASPAssemblerIDE()
         {
@@ -68,7 +69,7 @@ namespace WASP_Assembler
         private void SetCustomUiHeight()
         {
             int temp = splitContainer2.Panel1.Height - AssemblyCodeLbl.Height - 4;
-            ProjectTreeView.Height = temp - CurrentProjectLbl.Height;
+            ProjectTreeView.Height = temp;
             AssemblyCodeUi.Height = temp;
             MachineCodeUi.Height = temp;
         }
@@ -79,15 +80,16 @@ namespace WASP_Assembler
             {
                 string nodePath = Path.Combine(tempProjectFilePath, e.Node.FullPath.Replace("📁", "").Replace("🖹", ""));
                 AssemblyCodeUi.Text = File.ReadAllText(nodePath);
+                    CurrentProjectLbl.Text = "Current Project: " + e.Node.Text.Replace("🖹", "");
 
-                if (e.Node.Parent != null)
+                if (lastChangedNode != null)
                 {
-                    CurrentProjectLbl.Text = e.Node.Parent.Text.Replace("📁", "") + ": " + e.Node.Text.Replace("🖹", "");
+                    lastChangedNode.BackColor = Color.FromArgb(64, 64, 64);
+                    lastChangedNode.ForeColor = Color.White;
                 }
-                else
-                {
-                    CurrentProjectLbl.Text = e.Node.Text.Replace("🖹", "");
-                }
+                lastChangedNode = e.Node;
+                lastChangedNode.BackColor = Color.FromArgb(128, 128, 128);
+                lastChangedNode.ForeColor = Color.White;
             }
         }
 
