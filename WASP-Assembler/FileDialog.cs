@@ -6,12 +6,12 @@ namespace WASP_Assembler
     {
         public string projectsPath;
         public Settings settings;
-        public WASPAssemblerIDE form;
+        public WASPAssemblerIDE treeView;
 
         public enum Dialogtypes
         {
             Create,
-            Delete,
+            DeleteAndEdit,
             Both
         };
 
@@ -22,25 +22,29 @@ namespace WASP_Assembler
 
         public void SetVisibleElements(Dialogtypes dialogtype)
         {
+            RenameLbl.Visible = false;
             switch (dialogtype)
             {
                 case Dialogtypes.Create:
-                    NewFileLbl.Visible = true;
                     NewFolderLbl.Visible = true;
+                    NewFileLbl.Visible = true;
                     DeletLbl.Visible = false;
-                    this.Height = NewFileLbl.Height + NewFolderLbl.Height;
+                    //RenameLbl.Visible = true;
+                    this.Height = NewFileLbl.Height + NewFolderLbl.Height/* + RenameLbl.Height*/ + 2;
                     break;
-                case Dialogtypes.Delete:
-                    NewFileLbl.Visible = false;
+                case Dialogtypes.DeleteAndEdit:
                     NewFolderLbl.Visible = false;
+                    NewFileLbl.Visible = false;
                     DeletLbl.Visible = true;
-                    this.Height = DeletLbl.Height;
+                    //RenameLbl.Visible = true;
+                    this.Height = DeletLbl.Height/* + RenameLbl.Height*/ + 2;
                     break;
                 default:
-                    NewFileLbl.Visible = true;
                     NewFolderLbl.Visible = true;
+                    NewFileLbl.Visible = true;
                     DeletLbl.Visible = true;
-                    this.Height = NewFileLbl.Height + NewFolderLbl.Height + DeletLbl.Height;
+                    //RenameLbl.Visible = true;
+                    this.Height = NewFileLbl.Height + NewFolderLbl.Height + DeletLbl.Height/* + RenameLbl.Height*/ + 2;
                     break;
             }
 
@@ -48,16 +52,16 @@ namespace WASP_Assembler
 
         private void NewFileLbl_Click(object sender, EventArgs e)
         {
-            File.WriteAllText(Path.Combine(projectsPath, "New File.txt"), "");
+            File.WriteAllText(Path.Combine(projectsPath, "New File.asm"), "");
             this.Hide();
-            form.FillTreeView();
+            treeView.FillTreeView();
         }
 
         private void NewFolderLbl_Click(object sender, EventArgs e)
         {
             Directory.CreateDirectory(Path.Combine(projectsPath, "New Folder"));
             this.Hide();
-            form.FillTreeView();
+            treeView.FillTreeView();
         }
 
         private void DeletLbl_Click(object sender, EventArgs e)
@@ -71,14 +75,14 @@ namespace WASP_Assembler
                 File.Delete(projectsPath);
             }
             this.Hide();
-            form.FillTreeView();
+            treeView.FillTreeView();
         }
 
         private void Lbl_MouseEnter(object sender, EventArgs e)
         {
             if (sender is Label lbl)
             {
-                lbl.BackColor = settings.uiColors[2];
+                lbl.BackColor = settings.UiColors[2];
             }
         }
 
@@ -86,7 +90,7 @@ namespace WASP_Assembler
         {
             if (sender is Label lbl)
             {
-                lbl.BackColor = settings.uiColors[0];
+                lbl.BackColor = settings.UiColors[0];
             }
         }
     }

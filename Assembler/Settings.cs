@@ -9,7 +9,7 @@ namespace Logic
         /// ForeColor<br/>
         /// HighlightColor
         /// </summary>
-        public Color[] uiColors;
+        public Color[] UiColors;
 
         public void ReadSettings()
         {

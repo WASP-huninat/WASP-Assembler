@@ -4,11 +4,11 @@ namespace Logic
 {
     public class AssemblerLogic
     {
-        private AssemblerJsonClass.Assembly_Instructions assembly;
-        private AssemblerJsonClass.Rootobject? ISAClass = null;
-        private List<string> splittedAssembly = new List<string>();
-        private int operantId;
-        private int[] CountOfSpecificChars = new int[]
+        private AssemblerJsonClass.Assembly_Instructions _assembly;
+        private AssemblerJsonClass.Rootobject? _isaClass = null;
+        private List<string> _splittedAssembly = new List<string>();
+        private int _operantId;
+        private int[] _countOfSpecificChars = new int[]
             {
                 //Values: X Y Z I A
                 0, 0 ,0, 0, 0,
@@ -19,49 +19,49 @@ namespace Logic
         // Converts Json ISA Files to Class
         public void JsonToClassConverter(string PathOfISA)
         {
-            ISAClass = JsonConvert.DeserializeObject<AssemblerJsonClass.Rootobject>(File.ReadAllText(PathOfISA));
+            _isaClass = JsonConvert.DeserializeObject<AssemblerJsonClass.Rootobject>(File.ReadAllText(PathOfISA));
         }
 
         public string ConvertAssemblyToMicrocode(string[] AssemblyInput)
         {
             string OutputString = "";
             // Cheks if an assembler file is selected
-            if (ISAClass == null)
+            if (_isaClass == null)
             {
                 return "No ISA Selected";
             }
 
-            // Step over every line in the assembly code
+            // Step over every line in the _assembly code
             for (int i = 0; i < AssemblyInput.Length; i++)
             {
-                splittedAssembly = AssemblyInput[i].Split(' ', '\t').ToList();
+                _splittedAssembly = AssemblyInput[i].Split(' ', '\t').ToList();
                 // Step over every line in the .json file
                 int j = 0;
-                for (; j < ISAClass.Assembly_Instructions.Length; j++)
+                for (; j < _isaClass.Assembly_Instructions.Length; j++)
                 {
                     // Ignoring empty lines and Comments
                     if (AssemblyInput[i] == "" || AssemblyInput[i].StartsWith("//"))
                     {
                         OutputString += Environment.NewLine;
-                        j = ISAClass.Assembly_Instructions.Length + 1;
+                        j = _isaClass.Assembly_Instructions.Length + 1;
                     }
 
-                    // chek if the assembly operation is in the .json file
-                    else if (splittedAssembly[0].ToString().ToUpper() == ISAClass.Assembly_Instructions[j].Assembly_Mnemotic.ToUpper())
+                    // chek if the _assembly operation is in the .json file
+                    else if (_splittedAssembly[0].ToString().ToUpper() == _isaClass.Assembly_Instructions[j].Assembly_Mnemotic.ToUpper())
                     {
                         if (OutputString.Length > 0)
                         {
                             OutputString += Environment.NewLine;
                         }
 
-                        assembly = ISAClass.Assembly_Instructions[j];
+                        _assembly = _isaClass.Assembly_Instructions[j];
                         OutputString += OperantToMicrocode();
-                        j = ISAClass.Assembly_Instructions.Length + 1;
+                        j = _isaClass.Assembly_Instructions.Length + 1;
                     }
                 }
 
-                // output if no assembly operation was found
-                if (j != ISAClass.Assembly_Instructions.Length + 2)
+                // output if no _assembly operation was found
+                if (j != _isaClass.Assembly_Instructions.Length + 2)
                 {
                     if (OutputString.Length > 0)
                     {
@@ -75,47 +75,47 @@ namespace Logic
 
         private string OperantToMicrocode()
         {
-            if (assembly.Parameter_Order.Length > splittedAssembly.Count - 1)
+            if (_assembly.Parameter_Order.Length > _splittedAssembly.Count - 1)
             {
                 return "Not enough operators for this instruction";
             }
-            else if (assembly.Parameter_Order.Length < splittedAssembly.Count - 1)
+            else if (_assembly.Parameter_Order.Length < _splittedAssembly.Count - 1)
             {
                 return "Too many operators for this instruction";
             }
 
             List<string> operant = new List<string>();
-            for (int i = 1; i < splittedAssembly.Count; i++)
+            for (int i = 1; i < _splittedAssembly.Count; i++)
             {
-                if (splittedAssembly[i].StartsWith('#'))
+                if (_splittedAssembly[i].StartsWith('#'))
                 {
-                    splittedAssembly[i] = ConvertDecimalToBinary(splittedAssembly[i].Replace("#", ""), int.Parse(assembly.Parameter_Order[i - 1][1..]));
+                    _splittedAssembly[i] = ConvertDecimalToBinary(_splittedAssembly[i].Replace("#", ""), int.Parse(_assembly.Parameter_Order[i - 1][1..]));
                 }
-                operant.Add(splittedAssembly[i]);
+                operant.Add(_splittedAssembly[i]);
             }
 
-            for (int i = 0; i < CountOfSpecificChars.Length; i++)
+            for (int i = 0; i < _countOfSpecificChars.Length; i++)
             {
-                CountOfSpecificChars[i] = 0;
+                _countOfSpecificChars[i] = 0;
             }
             string output = "";
 
             // Step over every element in the bit array off the .json file
-            for (int i = 0; i < assembly.Binary.Length; i++)
+            for (int i = 0; i < _assembly.Binary.Length; i++)
             {
                 int assemblyAsInt = 0;
-                try { assemblyAsInt = Convert.ToInt32(assembly.Binary[i]); }
+                try { assemblyAsInt = Convert.ToInt32(_assembly.Binary[i]); }
                 catch { }
 
-                output += assembly.Binary[i].ToUpper() switch
+                output += _assembly.Binary[i].ToUpper() switch
                 {
                     "X" => PasteValuesForBinaryElement(operant, 0, 'X'),
                     "Y" => PasteValuesForBinaryElement(operant, 1, 'Y'),
                     "Z" => PasteValuesForBinaryElement(operant, 2, 'Z'),
                     "I" => PasteValuesForBinaryElement(operant, 3, 'I'),
                     "A" => PasteValuesForBinaryElement(operant, 4, 'A'),
-                    string when assemblyAsInt > 1 => PasteValuesForBinaryElement(operant, assemblyAsInt + 4, Convert.ToChar(assembly.Binary[i])),
-                    _ => assembly.Binary[i]
+                    string when assemblyAsInt > 1 => PasteValuesForBinaryElement(operant, assemblyAsInt + 4, Convert.ToChar(_assembly.Binary[i])),
+                    _ => _assembly.Binary[i]
                 };
             }
             return output;
@@ -123,31 +123,31 @@ namespace Logic
 
         private char PasteValuesForBinaryElement(List<string> operant, int CountOfSpecificCharElementNumber, char charToChek)
         {
-            for (int k = 0; k < assembly.Parameter_Order.Length; k++)
+            for (int k = 0; k < _assembly.Parameter_Order.Length; k++)
             {
-                if (assembly.Parameter_Order[k].ToUpper().StartsWith(charToChek))
+                if (_assembly.Parameter_Order[k].ToUpper().StartsWith(charToChek))
                 {
-                    operantId = k;
+                    _operantId = k;
                 }
             }
 
-            if (assembly.Parameter_Order[operantId].Length == 1)
+            if (_assembly.Parameter_Order[_operantId].Length == 1)
             {
-                assembly.Parameter_Order[operantId] = assembly.Parameter_Order[operantId] + "1";
+                _assembly.Parameter_Order[_operantId] = _assembly.Parameter_Order[_operantId] + "1";
             }
 
             char output;
             switch (operant)
             {
-                case List<string> when operant[operantId].Length == 0:
+                case List<string> when operant[_operantId].Length == 0:
                     output = '-';
                     break;
-                case List<string> when operant[operantId].Length == Convert.ToInt32(assembly.Parameter_Order[operantId][1..]):
+                case List<string> when operant[_operantId].Length == Convert.ToInt32(_assembly.Parameter_Order[_operantId][1..]):
                     {
                         try
                         {
-                            output = operant[operantId][CountOfSpecificChars[CountOfSpecificCharElementNumber]];
-                            CountOfSpecificChars[CountOfSpecificCharElementNumber]++;
+                            output = operant[_operantId][_countOfSpecificChars[CountOfSpecificCharElementNumber]];
+                            _countOfSpecificChars[CountOfSpecificCharElementNumber]++;
                         }
                         catch (Exception)
                         {
@@ -155,10 +155,10 @@ namespace Logic
                         }
                     };
                     break;
-                case List<string> when operant[operantId].Length < Convert.ToInt32(assembly.Parameter_Order[operantId][1..]):
+                case List<string> when operant[_operantId].Length < Convert.ToInt32(_assembly.Parameter_Order[_operantId][1..]):
                     output = '<';
                     break;
-                case List<string> when operant[operantId].Length > Convert.ToInt32(assembly.Parameter_Order[operantId][1..]):
+                case List<string> when operant[_operantId].Length > Convert.ToInt32(_assembly.Parameter_Order[_operantId][1..]):
                     output = '>';
                     break;
                 default:
@@ -202,13 +202,13 @@ namespace Logic
             }
 
             //  if the Value is bigger than the maximum bit add 00 at the end so that an error is shown
-            if (ISAClass.Most_Significant_Bit == "left" && x > 0)
+            if (_isaClass.Most_Significant_Bit == "left" && x > 0)
             {
                 output += "00";
             }
 
             //  if the Value is smaller than the minimum bit add null at the end so that an error is shown
-            if (ISAClass.Most_Significant_Bit == "right")
+            if (_isaClass.Most_Significant_Bit == "right")
             {
                 if (x > 1)
                 {

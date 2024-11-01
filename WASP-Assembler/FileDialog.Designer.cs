@@ -31,6 +31,7 @@
             NewFileLbl = new Label();
             NewFolderLbl = new Label();
             DeletLbl = new Label();
+            RenameLbl = new Label();
             SuspendLayout();
             // 
             // NewFileLbl
@@ -40,10 +41,10 @@
             NewFileLbl.Dock = DockStyle.Top;
             NewFileLbl.ForeColor = Color.White;
             NewFileLbl.ImageAlign = ContentAlignment.MiddleLeft;
-            NewFileLbl.Location = new Point(0, 0);
+            NewFileLbl.Location = new Point(1, 31);
             NewFileLbl.Margin = new Padding(0);
             NewFileLbl.Name = "NewFileLbl";
-            NewFileLbl.Size = new Size(167, 30);
+            NewFileLbl.Size = new Size(178, 30);
             NewFileLbl.TabIndex = 2;
             NewFileLbl.Text = "🗎 NewFile";
             NewFileLbl.TextAlign = ContentAlignment.MiddleLeft;
@@ -57,9 +58,9 @@
             NewFolderLbl.Cursor = Cursors.Hand;
             NewFolderLbl.Dock = DockStyle.Top;
             NewFolderLbl.ForeColor = Color.White;
-            NewFolderLbl.Location = new Point(0, 30);
+            NewFolderLbl.Location = new Point(1, 1);
             NewFolderLbl.Name = "NewFolderLbl";
-            NewFolderLbl.Size = new Size(167, 30);
+            NewFolderLbl.Size = new Size(178, 30);
             NewFolderLbl.TabIndex = 3;
             NewFolderLbl.Text = "📁 NewFolder";
             NewFolderLbl.TextAlign = ContentAlignment.MiddleLeft;
@@ -73,9 +74,10 @@
             DeletLbl.Cursor = Cursors.Hand;
             DeletLbl.Dock = DockStyle.Top;
             DeletLbl.ForeColor = Color.White;
-            DeletLbl.Location = new Point(0, 60);
+            DeletLbl.Location = new Point(1, 61);
+            DeletLbl.Margin = new Padding(0);
             DeletLbl.Name = "DeletLbl";
-            DeletLbl.Size = new Size(167, 30);
+            DeletLbl.Size = new Size(178, 30);
             DeletLbl.TabIndex = 4;
             DeletLbl.Text = "X Delete";
             DeletLbl.TextAlign = ContentAlignment.MiddleLeft;
@@ -83,17 +85,34 @@
             DeletLbl.MouseEnter += Lbl_MouseEnter;
             DeletLbl.MouseLeave += Lbl_MouseLeave;
             // 
+            // RenameLbl
+            // 
+            RenameLbl.BackColor = Color.FromArgb(64, 64, 64);
+            RenameLbl.Cursor = Cursors.Hand;
+            RenameLbl.Dock = DockStyle.Top;
+            RenameLbl.ForeColor = Color.White;
+            RenameLbl.Location = new Point(1, 91);
+            RenameLbl.Name = "RenameLbl";
+            RenameLbl.Size = new Size(178, 30);
+            RenameLbl.TabIndex = 5;
+            RenameLbl.Text = "Rename";
+            RenameLbl.TextAlign = ContentAlignment.MiddleLeft;
+            RenameLbl.MouseEnter += Lbl_MouseEnter;
+            RenameLbl.MouseLeave += Lbl_MouseLeave;
+            // 
             // FileDialog
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(64, 64, 64);
-            ClientSize = new Size(167, 106);
+            BackColor = Color.White;
+            ClientSize = new Size(180, 122);
+            Controls.Add(RenameLbl);
             Controls.Add(DeletLbl);
-            Controls.Add(NewFolderLbl);
             Controls.Add(NewFileLbl);
+            Controls.Add(NewFolderLbl);
             FormBorderStyle = FormBorderStyle.None;
             Name = "FileDialog";
+            Padding = new Padding(1);
             StartPosition = FormStartPosition.Manual;
             Text = "FileOptions";
             TopMost = true;
@@ -104,5 +123,6 @@
         private Label NewFileLbl;
         private Label NewFolderLbl;
         private Label DeletLbl;
+        private Label RenameLbl;
     }
 }
