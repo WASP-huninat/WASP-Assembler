@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             AssemblyCodeLbl = new Label();
             AssemblyCodeUi = new WASP_huninat.WinForms.CustomControls.RtbWithLineNumbers.UI();
             ProjectTreeView = new TreeView();
@@ -40,6 +41,7 @@
             splitContainer2 = new SplitContainer();
             MachineCodeUi = new WASP_huninat.WinForms.CustomControls.RtbWithLineNumbers.UI();
             MachineCodeLbl = new Label();
+            errorProvider1 = new ErrorProvider(components);
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -49,6 +51,7 @@
             splitContainer2.Panel1.SuspendLayout();
             splitContainer2.Panel2.SuspendLayout();
             splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)errorProvider1).BeginInit();
             SuspendLayout();
             // 
             // AssemblyCodeLbl
@@ -69,7 +72,7 @@
             AssemblyCodeUi.BackColor = Color.FromArgb(64, 64, 64);
             AssemblyCodeUi.Dock = DockStyle.Bottom;
             AssemblyCodeUi.ForeColor = Color.White;
-            AssemblyCodeUi.Location = new Point(0, 36);
+            AssemblyCodeUi.Location = new Point(0, 34);
             AssemblyCodeUi.Name = "AssemblyCodeUi";
             AssemblyCodeUi.Size = new Size(350, 308);
             AssemblyCodeUi.SplitColor = Color.Silver;
@@ -85,11 +88,14 @@
             ProjectTreeView.Indent = 20;
             ProjectTreeView.ItemHeight = 20;
             ProjectTreeView.LineColor = Color.FromArgb(28, 173, 240);
-            ProjectTreeView.Location = new Point(0, 36);
+            ProjectTreeView.Location = new Point(0, 34);
             ProjectTreeView.Name = "ProjectTreeView";
             ProjectTreeView.Size = new Size(200, 308);
             ProjectTreeView.TabIndex = 0;
+            ProjectTreeView.NodeMouseClick += ProjectTreeView_NodeMouseClick;
             ProjectTreeView.NodeMouseDoubleClick += ProjectTreeView_NodeMouseDoubleClick;
+            ProjectTreeView.Leave += ProjectTreeView_Leave;
+            ProjectTreeView.MouseClick += ProjectTreeView_MouseClick;
             // 
             // toolStrip1
             // 
@@ -142,7 +148,7 @@
             // splitContainer1
             // 
             splitContainer1.BackColor = Color.FromArgb(28, 173, 240);
-            splitContainer1.Dock = DockStyle.Top;
+            splitContainer1.Dock = DockStyle.Fill;
             splitContainer1.Location = new Point(0, 35);
             splitContainer1.Name = "splitContainer1";
             // 
@@ -157,7 +163,7 @@
             // 
             splitContainer1.Panel2.Controls.Add(splitContainer2);
             splitContainer1.Panel2.RightToLeft = RightToLeft.No;
-            splitContainer1.Size = new Size(900, 344);
+            splitContainer1.Size = new Size(900, 342);
             splitContainer1.SplitterDistance = 200;
             splitContainer1.TabIndex = 2;
             // 
@@ -194,7 +200,7 @@
             splitContainer2.Panel2.Controls.Add(MachineCodeUi);
             splitContainer2.Panel2.Controls.Add(MachineCodeLbl);
             splitContainer2.Panel2.RightToLeft = RightToLeft.No;
-            splitContainer2.Size = new Size(696, 344);
+            splitContainer2.Size = new Size(696, 342);
             splitContainer2.SplitterDistance = 350;
             splitContainer2.TabIndex = 0;
             // 
@@ -203,7 +209,7 @@
             MachineCodeUi.BackColor = Color.FromArgb(64, 64, 64);
             MachineCodeUi.Dock = DockStyle.Bottom;
             MachineCodeUi.ForeColor = Color.White;
-            MachineCodeUi.Location = new Point(0, 36);
+            MachineCodeUi.Location = new Point(0, 34);
             MachineCodeUi.Name = "MachineCodeUi";
             MachineCodeUi.Size = new Size(342, 308);
             MachineCodeUi.SplitColor = Color.Silver;
@@ -221,6 +227,10 @@
             MachineCodeLbl.TabIndex = 2;
             MachineCodeLbl.Text = "Machine code";
             MachineCodeLbl.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // errorProvider1
+            // 
+            errorProvider1.ContainerControl = this;
             // 
             // WASPAssemblerIDE
             // 
@@ -247,6 +257,7 @@
             splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
             splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)errorProvider1).EndInit();
             ResumeLayout(false);
         }
 
@@ -263,5 +274,6 @@
         private Label MachineCodeLbl;
         private ToolStripButton toolStripButton1;
         private Label CurrentProjectLbl;
+        private ErrorProvider errorProvider1;
     }
 }

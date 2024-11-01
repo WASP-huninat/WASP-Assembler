@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WASP-Assembler", "WASP-Assembler\WASP-Assembler.csproj", "{B24E05C8-76A9-4587-8BF4-041AD257A962}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Assembler", "Assembler\Assembler.csproj", "{FCDFAC96-1D80-42EE-9BEA-2AA4562DED2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic", "Assembler\Logic.csproj", "{FCDFAC96-1D80-42EE-9BEA-2AA4562DED2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

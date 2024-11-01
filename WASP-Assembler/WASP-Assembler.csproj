@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Assembler\Assembler.csproj" />
+    <ProjectReference Include="..\Assembler\Logic.csproj" />
   </ItemGroup>
 
   <ItemGroup>

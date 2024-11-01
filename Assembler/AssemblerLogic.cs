@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace Assembler
+namespace Logic
 {
-    public class AssemblerLogic : IAssemblerLogic
+    public class AssemblerLogic
     {
         private AssemblerJsonClass.Assembly_Instructions assembly;
         private AssemblerJsonClass.Rootobject? ISAClass = null;
@@ -17,12 +17,12 @@ namespace Assembler
             };
 
         // Converts Json ISA Files to Class
-        void IAssemblerLogic.JsonToClassConverter(string PathOfISA)
+        public void JsonToClassConverter(string PathOfISA)
         {
             ISAClass = JsonConvert.DeserializeObject<AssemblerJsonClass.Rootobject>(File.ReadAllText(PathOfISA));
         }
 
-        string IAssemblerLogic.ConvertAssemblyToMicrocode(string[] AssemblyInput)
+        public string ConvertAssemblyToMicrocode(string[] AssemblyInput)
         {
             string OutputString = "";
             // Cheks if an assembler file is selected
@@ -146,8 +146,8 @@ namespace Assembler
                     {
                         try
                         {
-                        output = operant[operantId][CountOfSpecificChars[CountOfSpecificCharElementNumber]];
-                        CountOfSpecificChars[CountOfSpecificCharElementNumber]++;
+                            output = operant[operantId][CountOfSpecificChars[CountOfSpecificCharElementNumber]];
+                            CountOfSpecificChars[CountOfSpecificCharElementNumber]++;
                         }
                         catch (Exception)
                         {
@@ -216,7 +216,7 @@ namespace Assembler
                 }
 
                 //  Inverts the bin string to set the MSB on the right side
-                output = new string (output.Reverse().ToArray());
+                output = new string(output.Reverse().ToArray());
             }
             return output;
         }

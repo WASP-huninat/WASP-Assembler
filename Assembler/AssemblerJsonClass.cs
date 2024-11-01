@@ -1,4 +1,4 @@
-﻿namespace Assembler
+﻿namespace Logic
 {
     internal class AssemblerJsonClass
     {

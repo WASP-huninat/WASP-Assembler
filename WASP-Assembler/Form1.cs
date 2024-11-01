@@ -1,21 +1,53 @@
-﻿using Assembler;
+﻿using Logic;
+
 namespace WASP_Assembler
 {
     public partial class WASPAssemblerIDE : Form
     {
-        readonly IAssemblerLogic _IAssemblerLogic = new AssemblerLogic();
+        readonly AssemblerLogic _AssemblerLogic = new AssemblerLogic();
         private string? selectedAssembler;
         private readonly string tempFilePath = Path.Combine(Path.GetTempPath(), "WASP-Assembler");
         private readonly string tempProjectFilePath = Path.Combine(Path.GetTempPath(), "WASP-Assembler", "Projects");
+        private readonly FileDialog fileDialog = new FileDialog();
         private TreeNode lastChangedNode;
+        private readonly Settings settings = new Settings();
 
         public WASPAssemblerIDE()
         {
             InitializeComponent();
         }
+        public void FillTreeView()
+        {
+            ProjectTreeView.Nodes.Clear();
+            ProjectTreeView.Nodes.Add(new TreeNode("📁 Projects", AddNodes(tempProjectFilePath)));
+            ProjectTreeView.Nodes[0].Expand();
+        }
+
+        private static TreeNode[] AddNodes(string filePath)
+        {
+            List<TreeNode> childNodes = new List<TreeNode>();
+
+            foreach (string item in Directory.EnumerateDirectories(filePath))
+            {
+                childNodes.Add(new TreeNode($"📁 {Path.GetFileName(item)}", AddNodes(item)));
+            }
+            foreach (string item in Directory.EnumerateFiles(filePath))
+            {
+                childNodes.Add(new TreeNode($"🗎 {Path.GetFileName(item)}"));
+            }
+
+            return childNodes.ToArray();
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            //  BackColor
+            //  ForeColor
+            //  HighlightColor
+            settings.uiColors = [Color.FromArgb(64, 64, 64), Color.White, Color.Gray];
+            fileDialog.settings = settings;
+            fileDialog.form = this;
+
             SetCustomUiHeight();
             // Create File Structure
             Directory.CreateDirectory(tempProjectFilePath);
@@ -24,46 +56,80 @@ namespace WASP_Assembler
             // Adds all assembly definition files to the Selected_Assembler Dropdown
             foreach (var isaFile in Directory.EnumerateFiles(tempFilePath))
             {
-                Selected_Assembler.DropDownItems.Add(isaFile.Replace($"{tempFilePath}\\", "")).BackColor = Color.FromArgb(50, 0, 0);
+                Selected_Assembler.DropDownItems.Add(isaFile.Replace($"{tempFilePath}\\", ""));
             }
 
-            // Adds all Projects To the TreeView
-            foreach (string item in Directory.EnumerateFileSystemEntries(tempProjectFilePath))
-            {
-                string Name = Path.GetFileName(item);
-                if (File.GetAttributes(item) == FileAttributes.Directory)
-                {
-                    // Get all files in one folder and adds to ChildNode list
-                    List<TreeNode> ChildNodes = new List<TreeNode>();
-                    foreach (var item1 in Directory.EnumerateFiles(item))
-                    {
-                        ChildNodes.Add(new TreeNode($"🖹{Path.GetFileName(item1)}"));
-                    }
-                    // Add File Nods to the correct Parent Node
-                    ProjectTreeView.Nodes.Add(new TreeNode($"📁{Name}", ChildNodes.ToArray()));
-                }
-                else
-                {
-                    ProjectTreeView.Nodes.Add($"🖹{Name}");
-                }
-            }
+            FillTreeView();
         }
 
         private void Selected_Assembler_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             selectedAssembler = e.ClickedItem.ToString();
             Selected_Assembler.Text = $"Selected Assembler: {selectedAssembler.Replace(".json", "")}";
-            _IAssemblerLogic.JsonToClassConverter(Path.Combine(tempFilePath, selectedAssembler));
+            _AssemblerLogic.JsonToClassConverter(Path.Combine(tempFilePath, selectedAssembler));
         }
 
         private void StartAssembleButto_Click(object sender, EventArgs e)
         {
-            MachineCodeUi.Text = _IAssemblerLogic.ConvertAssemblyToMicrocode(AssemblyCodeUi.Logic.TextRtb.Lines);
+            MachineCodeUi.Text = _AssemblerLogic.ConvertAssemblyToMicrocode(AssemblyCodeUi.Logic.TextRtb.Lines);
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
             SetCustomUiHeight();
+        }
+
+        private void ProjectTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (File.GetAttributes(Path.Combine(tempFilePath, e.Node.FullPath.Replace("📁 ", "").Replace("🗎 ", ""))) != FileAttributes.Directory)
+            {
+                string nodePath = Path.Combine(tempFilePath, e.Node.FullPath.Replace("📁 ", "").Replace("🗎 ", ""));
+                AssemblyCodeUi.Text = File.ReadAllText(nodePath);
+                CurrentProjectLbl.Text = "Current Project: " + e.Node.Text.Replace("🗎 ", "");
+
+                ChangeCurrentSelectedNode(settings.uiColors[2], e.Node);
+            }
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            string[] path = CurrentProjectLbl.Text.Split(": ");
+            if (path.Length < 2)
+            {
+                return;
+            }
+            File.WriteAllText(Path.Combine(tempProjectFilePath, path[0].ToString(), path[1].ToString()), AssemblyCodeUi.Text);
+        }
+
+        private void ProjectTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string fullNodePath = Path.Combine(tempFilePath, e.Node.FullPath.Replace("📁 ", "").Replace("🗎 ", ""));
+                if (File.GetAttributes(fullNodePath) == FileAttributes.Directory)
+                {
+                    ChangeCurrentSelectedNode(settings.uiColors[2], e.Node);
+                    fileDialog.SetVisibleElements(FileDialog.Dialogtypes.Both);
+                    fileDialog.Location = new Point(e.X + this.Location.X, e.Y + this.Location.Y);
+                }
+                else
+                {
+                    fileDialog.SetVisibleElements(FileDialog.Dialogtypes.Delete);
+                    fileDialog.Location = new Point(e.X + this.Location.X, e.Y + this.Location.Y + 60);
+                }
+                fileDialog.projectsPath = fullNodePath;
+
+                fileDialog.Show();
+            }
+            else
+            {
+                fileDialog.Hide();
+            }
+        }
+
+        private void ProjectTreeView_Leave(object sender, EventArgs e)
+        {
+            fileDialog.Hide();
         }
 
         private void SetCustomUiHeight()
@@ -74,29 +140,24 @@ namespace WASP_Assembler
             MachineCodeUi.Height = temp;
         }
 
-        private void ProjectTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void ChangeCurrentSelectedNode(Color newColorOfElement, TreeNode nodeToChange)
         {
-            if (e.Node.ToString().EndsWith(".txt"))
+            if (lastChangedNode != null)
             {
-                string nodePath = Path.Combine(tempProjectFilePath, e.Node.FullPath.Replace("📁", "").Replace("🖹", ""));
-                AssemblyCodeUi.Text = File.ReadAllText(nodePath);
-                    CurrentProjectLbl.Text = "Current Project: " + e.Node.Text.Replace("🖹", "");
-
-                if (lastChangedNode != null)
-                {
-                    lastChangedNode.BackColor = Color.FromArgb(64, 64, 64);
-                    lastChangedNode.ForeColor = Color.White;
-                }
-                lastChangedNode = e.Node;
-                lastChangedNode.BackColor = Color.FromArgb(128, 128, 128);
-                lastChangedNode.ForeColor = Color.White;
+                lastChangedNode.BackColor = settings.uiColors[0];
+                lastChangedNode.ForeColor = settings.uiColors[1];
             }
+            lastChangedNode = nodeToChange;
+            lastChangedNode.BackColor = settings.uiColors[2];
+            lastChangedNode.ForeColor = settings.uiColors[1];
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private void ProjectTreeView_MouseClick(object sender, MouseEventArgs e)
         {
-            string[] path = CurrentProjectLbl.Text.Split(": ");
-            File.WriteAllText(Path.Combine(tempProjectFilePath, path[0].ToString(), path[1].ToString()), AssemblyCodeUi.Text);
+            if (e.Button == MouseButtons.Left)
+            {
+                fileDialog.Hide();
+            }
         }
     }
 }
