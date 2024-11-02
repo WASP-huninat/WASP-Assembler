@@ -1,4 +1,7 @@
 ﻿using Logic;
+using Microsoft.VisualBasic.ApplicationServices;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace WASP_Assembler
 {
@@ -37,13 +40,28 @@ namespace WASP_Assembler
             return childNodes.ToArray();
         }
 
+        private TreeNode FindNodeByFullPath(TreeNodeCollection nodes, string fullPath)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                // Check if the current node's full path matches the full path we're looking for
+                if (Path.Combine(_tempFilePath, RemoveUnicodeIcons(node.FullPath)).Equals(fullPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    return node; // Found the node
+                }
+
+                // Recursively search in the child nodes
+                TreeNode foundNode = FindNodeByFullPath(node.Nodes, fullPath);
+                if (foundNode != null)
+                {
+                    return foundNode; // Return if found in children
+                }
+            }
+            return null; // Node not found
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(_filePath) && File.Exists(_filePath))
-            {
-                AssemblyCodeUi.Text = File.ReadAllText(_filePath);
-            }
-
             _settings.UiColors = [Color.FromArgb(64, 64, 64), Color.White, Color.Gray];
             _fileDialog.settings = _settings;
             _fileDialog.parentForm = this;
@@ -86,8 +104,20 @@ namespace WASP_Assembler
             {
                 SelectedAssemblerDdBtn.DropDownItems.Add(isaFile.Replace($"{_tempFilePath}\\", ""));
             }
-
             FillTreeView();
+
+            if (!string.IsNullOrEmpty(_filePath) && File.Exists(_filePath))
+            {
+                AssemblyCodeUi.Text = File.ReadAllText(_filePath);
+
+                TreeNode nodeToSelect = FindNodeByFullPath(ProjectTreeView.Nodes, _filePath);
+                if (nodeToSelect != null)
+                {
+                    ProjectTreeView.SelectedNode = nodeToSelect;
+                    _lastChangedNode = ProjectTreeView.SelectedNode;
+                    nodeToSelect.EnsureVisible();
+                }
+            }
         }
 
         private void Selected_Assembler_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
