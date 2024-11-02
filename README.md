@@ -10,7 +10,8 @@ WASP-Assembler.application
 ## How to install it
 Simply download the latest version .zip, .application and .exe file from the Releases tab.
 Put the exe and the contents of the zip file into a folder that should look like this:
-![image](https://github.com/user-attachments/assets/af708872-09a7-4fa2-93b5-c991d0fe956f)
+![grafik.png](https://github.com/user-attachments/assets/d56021a9-f182-402f-9fb2-597224b23aed)
+
 This will install the tool and create a shortcut on the desktop.
 
 ## How to update
