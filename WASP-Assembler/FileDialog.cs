@@ -6,7 +6,8 @@ namespace WASP_Assembler
     {
         public string projectsPath;
         public Settings settings;
-        public WASPAssemblerIDE treeView;
+        public WASPAssemblerIDE parentForm;
+        public TreeNode CurrentNode;
 
         public enum Dialogtypes
         {
@@ -20,31 +21,31 @@ namespace WASP_Assembler
             InitializeComponent();
         }
 
-        public void SetVisibleElements(Dialogtypes dialogtype)
+        /// <summary>
+        /// Sets the Visible Elements of this Form
+        /// </summary>
+        /// <param name="dialogtype">Spesifies the type of the Form</param>
+        public void VisibleElements(Dialogtypes dialogtype)
         {
-            RenameLbl.Visible = false;
+            NewFolderLbl.Visible = true;
+            NewFileLbl.Visible = true;
+            DeletLbl.Visible = true;
+            RenameLbl.Visible = true;
+
             switch (dialogtype)
             {
                 case Dialogtypes.Create:
-                    NewFolderLbl.Visible = true;
-                    NewFileLbl.Visible = true;
                     DeletLbl.Visible = false;
-                    //RenameLbl.Visible = true;
-                    this.Height = NewFileLbl.Height + NewFolderLbl.Height/* + RenameLbl.Height*/ + 2;
+                    RenameLbl.Visible = false;
+                    this.Height = NewFileLbl.Height + NewFolderLbl.Height + 2;
                     break;
                 case Dialogtypes.DeleteAndEdit:
                     NewFolderLbl.Visible = false;
                     NewFileLbl.Visible = false;
-                    DeletLbl.Visible = true;
-                    //RenameLbl.Visible = true;
-                    this.Height = DeletLbl.Height/* + RenameLbl.Height*/ + 2;
+                    this.Height = DeletLbl.Height + RenameLbl.Height + 2;
                     break;
                 default:
-                    NewFolderLbl.Visible = true;
-                    NewFileLbl.Visible = true;
-                    DeletLbl.Visible = true;
-                    //RenameLbl.Visible = true;
-                    this.Height = NewFileLbl.Height + NewFolderLbl.Height + DeletLbl.Height/* + RenameLbl.Height*/ + 2;
+                    this.Height = NewFileLbl.Height + NewFolderLbl.Height + DeletLbl.Height + RenameLbl.Height + 2;
                     break;
             }
 
@@ -52,30 +53,55 @@ namespace WASP_Assembler
 
         private void NewFileLbl_Click(object sender, EventArgs e)
         {
-            File.WriteAllText(Path.Combine(projectsPath, "New File.asm"), "");
+            int newFileCount = 0;
+
+            foreach (var item in Directory.EnumerateFiles(projectsPath))
+            {
+                if (Path.GetFileName(item).StartsWith("New File"))
+                {
+                    newFileCount++;
+                }
+            }
+            File.WriteAllText(Path.Combine(projectsPath, $"New File{newFileCount}.asm".Replace("0", "")), "");
             this.Hide();
-            treeView.FillTreeView();
+            parentForm.FillTreeView();
+            parentForm.Focus();
         }
 
         private void NewFolderLbl_Click(object sender, EventArgs e)
         {
-            Directory.CreateDirectory(Path.Combine(projectsPath, "New Folder"));
+            int newFileCount = 0;
+
+            foreach (var item in Directory.EnumerateDirectories(projectsPath))
+            {
+                if (Path.GetFileName(item).StartsWith("New Folde"))
+                {
+                    newFileCount++;
+                }
+            }
+            Directory.CreateDirectory(Path.Combine(projectsPath, $"New Folder{newFileCount}").Replace("0", ""));
             this.Hide();
-            treeView.FillTreeView();
+            parentForm.FillTreeView();
         }
 
         private void DeletLbl_Click(object sender, EventArgs e)
         {
             if (File.GetAttributes(projectsPath) == FileAttributes.Directory)
             {
-                Directory.Delete(projectsPath, true);                
+                Directory.Delete(projectsPath, true);
             }
             else
             {
                 File.Delete(projectsPath);
             }
             this.Hide();
-            treeView.FillTreeView();
+            parentForm.FillTreeView();
+        }
+
+        private void RenameLbl_Click(object sender, EventArgs e)
+        {
+            CurrentNode.BeginEdit();
+            this.Hide();
         }
 
         private void Lbl_MouseEnter(object sender, EventArgs e)

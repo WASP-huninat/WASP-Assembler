@@ -95,8 +95,9 @@
             RenameLbl.Name = "RenameLbl";
             RenameLbl.Size = new Size(178, 30);
             RenameLbl.TabIndex = 5;
-            RenameLbl.Text = "Rename";
+            RenameLbl.Text = "   Rename";
             RenameLbl.TextAlign = ContentAlignment.MiddleLeft;
+            RenameLbl.Click += RenameLbl_Click;
             RenameLbl.MouseEnter += Lbl_MouseEnter;
             RenameLbl.MouseLeave += Lbl_MouseLeave;
             // 
@@ -113,9 +114,10 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "FileDialog";
             Padding = new Padding(1);
+            ShowInTaskbar = false;
+            SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.Manual;
             Text = "FileOptions";
-            TopMost = true;
             ResumeLayout(false);
         }
 
