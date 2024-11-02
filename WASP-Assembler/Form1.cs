@@ -42,7 +42,6 @@ namespace WASP_Assembler
             if (!string.IsNullOrEmpty(_filePath) && File.Exists(_filePath))
             {
                 AssemblyCodeUi.Text = File.ReadAllText(_filePath);
-                CurrentProjectLbl.Text = "Current Project: " + Path.GetFileName(_filePath);
             }
 
             _settings.UiColors = [Color.FromArgb(64, 64, 64), Color.White, Color.Gray];
@@ -114,7 +113,6 @@ namespace WASP_Assembler
             if (File.GetAttributes(nodePath) != FileAttributes.Directory)
             {
                 AssemblyCodeUi.Text = File.ReadAllText(nodePath);
-                CurrentProjectLbl.Text = "Current Project: " + e.Node.Text.Replace("🗎 ", "");
 
                 ChangeCurrentSelectedNode(_settings.UiColors[2], e.Node);
             }

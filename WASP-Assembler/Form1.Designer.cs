@@ -105,7 +105,7 @@
             CurrentProjectLbl.Name = "CurrentProjectLbl";
             CurrentProjectLbl.Size = new Size(200, 30);
             CurrentProjectLbl.TabIndex = 0;
-            CurrentProjectLbl.Text = "Current Project:";
+            CurrentProjectLbl.Text = "Current Project";
             CurrentProjectLbl.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // splitContainer2
