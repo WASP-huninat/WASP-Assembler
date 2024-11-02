@@ -5,7 +5,9 @@ namespace WASP_Assembler
     public partial class WASPAssemblerIDE : Form
     {
         private readonly AssemblerLogic _assemblerLogic = new AssemblerLogic();
+        private string? _selectedAssembler;
         private readonly string _tempFilePath = Path.Combine(Path.GetTempPath(), "WASP-Assembler");
+        private readonly string _tempProjectFilePath = Path.Combine(Path.GetTempPath(), "WASP-Assembler", "Projects");
         private readonly FileDialog _fileDialog = new FileDialog();
         private TreeNode? _lastChangedNode;
         private readonly Settings _settings = new Settings();
@@ -19,13 +21,14 @@ namespace WASP_Assembler
         public void FillTreeView()
         {
             ProjectTreeView.Nodes.Clear();
-            ProjectTreeView.Nodes.Add(new TreeNode("📁 Projects", AddNodes(Path.Combine(_tempFilePath, "Projects"))));
+            ProjectTreeView.Nodes.Add(new TreeNode("📁 Projects", AddNodes(_tempProjectFilePath)));
             ProjectTreeView.Nodes[0].Expand();
         }
 
         private static TreeNode[] AddNodes(string filePath)
         {
             List<TreeNode> childNodes = new List<TreeNode>();
+
             foreach (string item in Directory.EnumerateDirectories(filePath))
             {
                 childNodes.Add(new TreeNode($"📁 {Path.GetFileName(item)}", AddNodes(item)));
@@ -34,6 +37,7 @@ namespace WASP_Assembler
             {
                 childNodes.Add(new TreeNode($"🗎 {Path.GetFileName(item)}"));
             }
+
             return childNodes.ToArray();
         }
 
@@ -47,45 +51,17 @@ namespace WASP_Assembler
 
             _settings.UiColors = [Color.FromArgb(64, 64, 64), Color.White, Color.Gray];
             _fileDialog.settings = _settings;
-            _fileDialog.parentForm = this;
+            _fileDialog.treeView = this;
 
             SetCustomUiHeight();
             // Create File Structure
-            Directory.CreateDirectory(Path.Combine(Path.Combine(_tempFilePath, "Projects")));
-            File.WriteAllText(Path.Combine(_tempFilePath, "Example.json"), @"
-{
-	""Instruction_Bits"": ""16"",
-	""Most_Significant_Bit"": ""left"",
-	""Assembly_Instructions"": [
-		{
-			""Assembly_Mnemotic"": ""NOP"",
-			""Parameter_Order"": [],
-			//			1	2   3   4	5   6   7  8   9	10	11	12	13	14	15	16
-			""Binary"": [""0"",""0"",""0"",""0"",""0"",""0"",""0"",""0"",""0"",""0"",""0"",""0"",""0"",""0"",""0"",""0""]
-		},
-		{
-			""Assembly_Mnemotic"": ""JMP"",
-			""Parameter_Order"": [""A5""],
-			//			1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16
-			""Binary"": [""0"",""0"",""0"",""0"",""0"",""1"",""0"",""0"",""0"",""0"",""0"",""A"",""A"",""A"",""A"",""A""]
-		},		{
-			""Assembly_Mnemotic"": ""ADD"",
-			""Parameter_Order"": [""Z3"",""Y3"",""X3""],
-			//			1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16
-			""Binary"": [""0"",""0"",""0"",""0"",""1"",""1"",""1"",""Z"",""Z"",""Z"",""X"",""X"",""X"",""Y"",""Y"",""Y""]
-		},
-		{
-			""Assembly_Mnemotic"": """",
-			""Parameter_Order"": [],
-			//			1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16
-			""Binary"": ["""","""","""","""","""","""","""","""","""","""","""","""","""","""","""",""""]
-		}
-	]
-}");
+            Directory.CreateDirectory(_tempProjectFilePath);
+            File.WriteAllText(Path.Combine(_tempFilePath, "Example.json"), "{\r\n\t\"Instruction_Bits\": \"16\",\r\n\t\"Most_Significant_Bit\": \"left\",\r\n\t\"Assembly_Instructions\": [\r\n\t\t{\r\n\t\t\t\"Assembly_Mnemotic\": \"NOP\",\r\n\t\t\t\"Parameter_Order\": [],\r\n\t\t\t//\t\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16\r\n\t\t\t\"Binary\": [\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"]\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"Assembly_Mnemotic\": \"JMP\",\r\n\t\t\t\"Parameter_Order\": [\"A5\"],\r\n\t\t\t//\t\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16\r\n\t\t\t\"Binary\": [\"0\",\"0\",\"0\",\"0\",\"0\",\"1\",\"0\",\"0\",\"0\",\"0\",\"0\",\"A\",\"A\",\"A\",\"A\",\"A\"]\r\n\t\t},\t\t{\r\n\t\t\t\"Assembly_Mnemotic\": \"ADD\",\r\n\t\t\t\"Parameter_Order\": [\"Z3\",\"Y3\",\"X3\"],\r\n\t\t\t//\t\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16\r\n\t\t\t\"Binary\": [\"0\",\"0\",\"0\",\"0\",\"1\",\"1\",\"1\",\"Z\",\"Z\",\"Z\",\"X\",\"X\",\"X\",\"Y\",\"Y\",\"Y\"]\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"Assembly_Mnemotic\": \"\",\r\n\t\t\t\"Parameter_Order\": [],\r\n\t\t\t//\t\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16\r\n\t\t\t\"Binary\": [\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"]\r\n\t\t}\r\n\t]\r\n}");
+
             // Adds all assembly definition files to the Selected_Assembler Dropdown
             foreach (var isaFile in Directory.EnumerateFiles(_tempFilePath))
             {
-                SelectedAssemblerDdBtn.DropDownItems.Add(isaFile.Replace($"{_tempFilePath}\\", ""));
+                Selected_Assembler.DropDownItems.Add(isaFile.Replace($"{_tempFilePath}\\", ""));
             }
 
             FillTreeView();
@@ -93,9 +69,9 @@ namespace WASP_Assembler
 
         private void Selected_Assembler_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            string selectedAssembler = e.ClickedItem.ToString();
-            SelectedAssemblerDdBtn.Text = $"Selected Assembler: {selectedAssembler.Replace(".json", "")}";
-            _assemblerLogic.JsonToClassConverter(Path.Combine(_tempFilePath, selectedAssembler));
+            _selectedAssembler = e.ClickedItem.ToString();
+            Selected_Assembler.Text = $"Selected Assembler: {_selectedAssembler.Replace(".json", "")}";
+            _assemblerLogic.JsonToClassConverter(Path.Combine(_tempFilePath, _selectedAssembler));
         }
 
         private void StartAssembleButto_Click(object sender, EventArgs e)
@@ -110,9 +86,9 @@ namespace WASP_Assembler
 
         private void ProjectTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            string nodePath = Path.Combine(_tempFilePath, RemoveUnicodeIcons(e.Node.FullPath));
-            if (File.GetAttributes(nodePath) != FileAttributes.Directory)
+            if (File.GetAttributes(Path.Combine(_tempFilePath, e.Node.FullPath.Replace("📁 ", "").Replace("🗎 ", ""))) != FileAttributes.Directory)
             {
+                string nodePath = Path.Combine(_tempFilePath, e.Node.FullPath.Replace("📁 ", "").Replace("🗎 ", ""));
                 AssemblyCodeUi.Text = File.ReadAllText(nodePath);
                 CurrentProjectLbl.Text = "Current Project: " + e.Node.Text.Replace("🗎 ", "");
 
@@ -122,42 +98,42 @@ namespace WASP_Assembler
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            File.WriteAllText(Path.Combine(_tempFilePath, RemoveUnicodeIcons(_lastChangedNode.FullPath)), AssemblyCodeUi.Text);
+            string[] path = CurrentProjectLbl.Text.Split(": ");
+            if (path.Length < 2)
+            {
+                return;
+            }
+            File.WriteAllText(Path.Combine(_tempFilePath, _lastChangedNode.FullPath.Replace("📁 ", "").Replace("🗎 ", "")), AssemblyCodeUi.Text);
         }
 
         private void ProjectTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
-                ProjectTreeView.LabelEdit = true;
-
-                Point mousePoint = new Point(e.X + this.Location.X + 10, e.Y + this.Location.Y + 40);
-
-                string fullNodePath = Path.Combine(_tempFilePath, RemoveUnicodeIcons(e.Node.FullPath));
+                int baseX = e.X + this.Location.X + 10;
+                int baseY = e.Y + this.Location.Y;
+                string fullNodePath = Path.Combine(_tempFilePath, e.Node.FullPath.Replace("📁 ", "").Replace("🗎 ", ""));
                 if (e.Node.Parent == null)
                 {
-                    _fileDialog.VisibleElements(FileDialog.Dialogtypes.Create);
-                    mousePoint.Y += _fileDialog.Height;
+                    ProjectTreeView.SelectedNode = e.Node;
+                    _fileDialog.SetVisibleElements(FileDialog.Dialogtypes.Create);
+                    _fileDialog.Location = new Point(baseX, baseY + _fileDialog.Height + 15);
                 }
                 else if (File.GetAttributes(fullNodePath) == FileAttributes.Directory)
                 {
-                    _fileDialog.VisibleElements(FileDialog.Dialogtypes.Both);
-                    mousePoint.Y += _fileDialog.Height - 60;
+                    ProjectTreeView.SelectedNode = e.Node;
+                    _fileDialog.SetVisibleElements(FileDialog.Dialogtypes.Both);
+                    _fileDialog.Location = new Point(baseX, baseY + _fileDialog.Height - 15);
                 }
                 else
                 {
-                    _fileDialog.VisibleElements(FileDialog.Dialogtypes.DeleteAndEdit);
-                    mousePoint.Y += _fileDialog.Height;
+                    ProjectTreeView.SelectedNode = e.Node;
+                    _fileDialog.SetVisibleElements(FileDialog.Dialogtypes.DeleteAndEdit);
+                    _fileDialog.Location = new Point(baseX, baseY + _fileDialog.Height + 45);
                 }
-
-                _fileDialog.Location = mousePoint;
-
-                ProjectTreeView.SelectedNode = e.Node;
-
-                _fileDialog.CurrentNode = e.Node;
                 _fileDialog.projectsPath = fullNodePath;
+
                 _fileDialog.Show();
-                _fileDialog.Focus();
             }
             else
             {
@@ -196,40 +172,6 @@ namespace WASP_Assembler
             {
                 _fileDialog.Hide();
             }
-        }
-
-        private void ProjectTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
-        {
-            if (e.Node == _fileDialog.CurrentNode)
-            {
-                var t = Path.Combine(_tempFilePath, RemoveUnicodeIcons(e.Node.FullPath));
-                var s = Path.Combine(_tempFilePath, RemoveUnicodeIcons(e.Node.Parent.FullPath), e.Label + Path.GetExtension(e.Node.FullPath));
-
-                try
-                {
-                    if (Path.GetExtension(e.Node.FullPath) != null)
-                    {
-                        File.Move(t, s);
-                    }
-                    else
-                    {
-                        Directory.Move(t, s);
-                    }
-                }
-                catch (Exception)
-                {
-                    errorProvider1.SetError(ProjectTreeView, "Test");
-                    MessageBox.Show("File name already exists");
-                }
-
-                FillTreeView();
-                ProjectTreeView.LabelEdit = false;
-            }
-        }
-
-        private string RemoveUnicodeIcons(string stringToBeRenamed)
-        {
-            return stringToBeRenamed.Replace("📁 ", "").Replace("🗎 ", "");
         }
     }
 }
