@@ -1,7 +1,7 @@
 # WASP-Assembler (Only a beta right now)
 If you have questions about how to do things with this program, check the wiki
 
-## How to install it
+## How to install/update it
 Just download the latest version zip file and exe from the Releases tab.
 Put the exe and the contents of the zip file into a folder that should look like this:
 
