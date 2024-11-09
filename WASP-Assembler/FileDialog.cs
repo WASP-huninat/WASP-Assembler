@@ -4,10 +4,10 @@ namespace WASP_Assembler
 {
     public partial class FileDialog : Form
     {
-        public string projectsPath;
-        public Settings settings;
-        public WASPAssemblerIDE parentForm;
-        public TreeNode CurrentNode;
+        public string? projectsPath;
+        public Settings? settings;
+        public WASPAssemblerIDE? parentForm;
+        public TreeNode? CurrentNode;
 
         public enum Dialogtypes
         {
@@ -53,60 +53,72 @@ namespace WASP_Assembler
 
         private void NewFileLbl_Click(object sender, EventArgs e)
         {
-            int newFileCount = 0;
-
-            foreach (var item in Directory.EnumerateFiles(projectsPath))
+            if (parentForm != null && projectsPath!= null)
             {
-                if (Path.GetFileName(item).StartsWith("New File"))
+                int newFileCount = 0;
+
+                foreach (var item in Directory.EnumerateFiles(projectsPath))
                 {
-                    newFileCount++;
+                    if (Path.GetFileName(item).StartsWith("New File"))
+                    {
+                        newFileCount++;
+                    }
                 }
+                File.WriteAllText(Path.Combine(projectsPath, $"New File{newFileCount}.asm".Replace("0", "")), "");
+                this.Hide();
+                parentForm.FillTreeView();
+                parentForm.Focus();
             }
-            File.WriteAllText(Path.Combine(projectsPath, $"New File{newFileCount}.asm".Replace("0", "")), "");
-            this.Hide();
-            parentForm.FillTreeView();
-            parentForm.Focus();
         }
 
         private void NewFolderLbl_Click(object sender, EventArgs e)
         {
-            int newFileCount = 0;
-
-            foreach (var item in Directory.EnumerateDirectories(projectsPath))
+            if (parentForm != null && projectsPath != null)
             {
-                if (Path.GetFileName(item).StartsWith("New Folde"))
+                int newFileCount = 0;
+
+                foreach (var item in Directory.EnumerateDirectories(projectsPath))
                 {
-                    newFileCount++;
+                    if (Path.GetFileName(item).StartsWith("New Folde"))
+                    {
+                        newFileCount++;
+                    }
                 }
+                Directory.CreateDirectory(Path.Combine(projectsPath, $"New Folder{newFileCount}").Replace("0", ""));
+                this.Hide();
+                parentForm.FillTreeView();
             }
-            Directory.CreateDirectory(Path.Combine(projectsPath, $"New Folder{newFileCount}").Replace("0", ""));
-            this.Hide();
-            parentForm.FillTreeView();
         }
 
         private void DeletLbl_Click(object sender, EventArgs e)
         {
-            if (File.GetAttributes(projectsPath) == FileAttributes.Directory)
+            if (parentForm != null && projectsPath != null)
             {
-                Directory.Delete(projectsPath, true);
+                if (File.GetAttributes(projectsPath) == FileAttributes.Directory)
+                {
+                    Directory.Delete(projectsPath, true);
+                }
+                else
+                {
+                    File.Delete(projectsPath);
+                }
+                this.Hide();
+                parentForm.FillTreeView();
             }
-            else
-            {
-                File.Delete(projectsPath);
-            }
-            this.Hide();
-            parentForm.FillTreeView();
         }
 
         private void RenameLbl_Click(object sender, EventArgs e)
         {
-            CurrentNode.BeginEdit();
-            this.Hide();
+            if (CurrentNode != null)
+            {
+                CurrentNode.BeginEdit();
+                this.Hide();
+            }
         }
 
         private void Lbl_MouseEnter(object sender, EventArgs e)
         {
-            if (sender is Label lbl)
+            if (sender is Label lbl && settings != null)
             {
                 lbl.BackColor = settings.UiColors[2];
             }
@@ -114,7 +126,7 @@ namespace WASP_Assembler
 
         private void Lbl_MouseLeave(object sender, EventArgs e)
         {
-            if (sender is Label lbl)
+            if (sender is Label lbl && settings != null)
             {
                 lbl.BackColor = settings.UiColors[0];
             }

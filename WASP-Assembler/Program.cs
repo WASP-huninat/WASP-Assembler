@@ -12,7 +12,7 @@ namespace WASP_Assembler
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
-            string filePath = args.FirstOrDefault();
+            string? filePath = args.FirstOrDefault();
 
             Application.Run(new WASPAssemblerIDE(filePath));
         }

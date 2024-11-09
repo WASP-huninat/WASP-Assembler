@@ -211,9 +211,10 @@
             AssembleBtn.BackColor = Color.Transparent;
             AssembleBtn.ForeColor = Color.White;
             AssembleBtn.Image = Properties.Resources.Green_Triangle;
+            AssembleBtn.ImageScaling = ToolStripItemImageScaling.None;
             AssembleBtn.ImageTransparentColor = Color.Magenta;
             AssembleBtn.Name = "AssembleBtn";
-            AssembleBtn.Size = new Size(97, 24);
+            AssembleBtn.Size = new Size(87, 24);
             AssembleBtn.Text = "Assemble";
             AssembleBtn.Click += StartAssembleButto_Click;
             // 
@@ -270,6 +271,5 @@
         private Label MicroCodeLbl;
         private ToolStripButton SaveCurrentFileBtn;
         private Label CurrentProjectLbl;
-        private ErrorProvider errorProvider1;
     }
 }

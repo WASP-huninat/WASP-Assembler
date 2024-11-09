@@ -1,7 +1,4 @@
 ﻿using Logic;
-using Microsoft.VisualBasic.ApplicationServices;
-using System.Reflection;
-using System.Xml.Linq;
 
 namespace WASP_Assembler
 {
@@ -12,9 +9,9 @@ namespace WASP_Assembler
         private readonly FileDialog _fileDialog = new FileDialog();
         private TreeNode? _lastChangedNode;
         private readonly Settings _settings = new Settings();
-        private readonly string _filePath;
+        private readonly string? _filePath;
 
-        public WASPAssemblerIDE(string filePath = null)
+        public WASPAssemblerIDE(string? filePath = "")
         {
             InitializeComponent();
             _filePath = filePath;
@@ -40,7 +37,7 @@ namespace WASP_Assembler
             return childNodes.ToArray();
         }
 
-        private TreeNode FindNodeByFullPath(TreeNodeCollection nodes, string fullPath)
+        private TreeNode? FindNodeByFullPath(TreeNodeCollection nodes, string fullPath)
         {
             foreach (TreeNode node in nodes)
             {
@@ -51,7 +48,7 @@ namespace WASP_Assembler
                 }
 
                 // Recursively search in the child nodes
-                TreeNode foundNode = FindNodeByFullPath(node.Nodes, fullPath);
+                TreeNode? foundNode = FindNodeByFullPath(node.Nodes, fullPath);
                 if (foundNode != null)
                 {
                     return foundNode; // Return if found in children
@@ -110,7 +107,7 @@ namespace WASP_Assembler
             {
                 AssemblyCodeUi.Text = File.ReadAllText(_filePath);
 
-                TreeNode nodeToSelect = FindNodeByFullPath(ProjectTreeView.Nodes, _filePath);
+                TreeNode? nodeToSelect = FindNodeByFullPath(ProjectTreeView.Nodes, _filePath);
                 if (nodeToSelect != null)
                 {
                     ProjectTreeView.SelectedNode = nodeToSelect;
@@ -122,9 +119,12 @@ namespace WASP_Assembler
 
         private void Selected_Assembler_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            string selectedAssembler = e.ClickedItem.ToString();
-            SelectedAssemblerDdBtn.Text = $"Selected Assembler: {selectedAssembler.Replace(".json", "")}";
-            _assemblerLogic.JsonToClassConverter(Path.Combine(_tempFilePath, selectedAssembler));
+            if (e.ClickedItem?.Text != null)
+            {
+                string selectedAssembler = e.ClickedItem.Text;
+                SelectedAssemblerDdBtn.Text = $"Selected Assembler: {selectedAssembler.Replace(".json", "")}";
+                _assemblerLogic.JsonToClassConverter(Path.Combine(_tempFilePath, selectedAssembler));
+            }
         }
 
         private void StartAssembleButto_Click(object sender, EventArgs e)
@@ -150,7 +150,10 @@ namespace WASP_Assembler
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            File.WriteAllText(Path.Combine(_tempFilePath, RemoveUnicodeIcons(_lastChangedNode.FullPath)), AssemblyCodeUi.Text);
+            if (_lastChangedNode != null)
+            {
+                File.WriteAllText(Path.Combine(_tempFilePath, RemoveUnicodeIcons(_lastChangedNode.FullPath)), AssemblyCodeUi.Text);
+            }
         }
 
         private void ProjectTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -228,7 +231,7 @@ namespace WASP_Assembler
 
         private void ProjectTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            if (e.Node == _fileDialog.CurrentNode)
+            if (e.Node == _fileDialog.CurrentNode && e.Node != null)
             {
                 var t = Path.Combine(_tempFilePath, RemoveUnicodeIcons(e.Node.FullPath));
                 var s = Path.Combine(_tempFilePath, RemoveUnicodeIcons(e.Node.Parent.FullPath), e.Label + Path.GetExtension(e.Node.FullPath));
@@ -246,7 +249,6 @@ namespace WASP_Assembler
                 }
                 catch (Exception)
                 {
-                    errorProvider1.SetError(ProjectTreeView, "Test");
                     MessageBox.Show("File name already exists");
                 }
 
