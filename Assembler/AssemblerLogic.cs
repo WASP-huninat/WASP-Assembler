@@ -72,7 +72,7 @@ namespace Logic
             }
 
             // First steps trougth every operant and then edit the list where no Binary value is present
-            string[] binaryOutput = instructionName.Binary;
+            string[] binaryOutput = (string[])instructionName.Binary.Clone();
             for (int i = 0; i < operants.Length; i++)
             {
                 int parameterBitCount = int.Parse(instructionName.Parameter_Order[i][1..]);
