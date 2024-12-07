@@ -24,11 +24,15 @@ namespace Logic
             // Step over every line in the assembly code
             for (int i = 0; i < AssemblyInput.Length; i++)
             {
+                AssemblyInput[i].Replace("/v", "");
                 string[] splittedAssembly = AssemblyInput[i].Split([' ', '\t'], 2);
                 // Ignoring empty lines and Comments
                 if (splittedAssembly[0] == "" || splittedAssembly[0].StartsWith("//"))
                 {
-                    OutputString += Environment.NewLine;
+                    if (i > 0)
+                    {
+                        OutputString += Environment.NewLine;
+                    }
                 }
                 else
                 {
@@ -42,7 +46,17 @@ namespace Logic
                             {
                                 OutputString += Environment.NewLine;
                             }
-                            OutputString += GenerateMicrocode(splittedAssembly[1].Split(','), _isaClass.Assembly_Instructions[j]);
+                            if (splittedAssembly.Length != 1)
+                            {
+                                OutputString += GenerateMicrocode(splittedAssembly[1].Split(','), _isaClass.Assembly_Instructions[j]);
+                            }
+                            else
+                            {
+                                foreach (var bit in _isaClass.Assembly_Instructions[j].Binary)
+                                {
+                                    OutputString += bit;
+                                }
+                            }
                             j = _isaClass.Assembly_Instructions.Length + 1;
                         }
                     }
@@ -109,21 +123,30 @@ namespace Logic
         {
             string output = "";
             int x = Convert.ToInt32(decimalNumber);
+            int Signed = 0;
+
+            //convert negativ number to tows compliment
+            if (x < 0)
+            {
+                x = -x;
+                x--;
+                Signed = 1;
+            }
 
             //  match with base 2 Numbers
             //  starting at 2 until end of integer limit
-            for (int i = bitCount - 1; i > 0; i--)
+            for (int i = bitCount; i > 0; i--)
             {
                 int bitvalue = (int)Math.Pow(2, i);
 
                 if (bitvalue <= x)
                 {
                     x -= bitvalue;
-                    output += 1;
+                    output += 1 ^ Signed;
                 }
                 else
                 {
-                    output += 0;
+                    output += 0 ^ Signed;
                 }
             }
 
@@ -131,11 +154,11 @@ namespace Logic
             if (x == 1)
             {
                 x -= 1;
-                output += 1;
+                output += 1 ^ Signed;
             }
             else if (x == 0)
             {
-                output += 0;
+                output += 0 ^ Signed;
             }
 
             //  if the Value is bigger than the maximum bit add 00 at the end so that an error is shown
