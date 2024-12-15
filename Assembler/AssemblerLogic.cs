@@ -52,10 +52,18 @@ namespace Logic
                             }
                             else
                             {
+                                string temp = "";
+
+                                for (int k = 0; k < _isaClass.Assembly_Instructions[j].Binary.Length; k++)
+                                {
+                                    
+                                }
+
                                 foreach (var bit in _isaClass.Assembly_Instructions[j].Binary)
                                 {
-                                    OutputString += bit;
+                                    temp += bit;
                                 }
+                                OutputString += temp;
                             }
                             j = _isaClass.Assembly_Instructions.Length + 1;
                         }
@@ -135,7 +143,7 @@ namespace Logic
 
             //  match with base 2 Numbers
             //  starting at 2 until end of integer limit
-            for (int i = bitCount; i > 0; i--)
+            for (int i = bitCount - 1; i > 0; i--)
             {
                 int bitvalue = (int)Math.Pow(2, i);
 

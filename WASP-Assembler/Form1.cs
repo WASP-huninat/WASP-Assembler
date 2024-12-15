@@ -129,7 +129,7 @@ namespace WASP_Assembler
 
         private void StartAssembleButto_Click(object sender, EventArgs e)
         {
-            MicroCodeUi.Text = _assemblerLogic.ConvertAssemblyToMicrocode(AssemblyCodeUi.Logic.TextRtb.Lines);
+            MicroCodeUi.RTB.Text = _assemblerLogic.ConvertAssemblyToMicrocode(AssemblyCodeUi.RTB.Lines);
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)

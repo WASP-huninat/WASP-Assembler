@@ -32,9 +32,9 @@
             ProjectTreeView = new TreeView();
             CurrentProjectLbl = new Label();
             splitContainer2 = new SplitContainer();
-            AssemblyCodeUi = new WASP_huninat.WinForms.CustomControls.RtbWithLineNumbers.UI();
+            AssemblyCodeUi = new WASP_huninat.WinForms.CustomControls.RTB.RTBWithLineNumbers();
             AssemblyCodeLbl = new Label();
-            MicroCodeUi = new WASP_huninat.WinForms.CustomControls.RtbWithLineNumbers.UI();
+            MicroCodeUi = new WASP_huninat.WinForms.CustomControls.RTB.RTBWithLineNumbers();
             MicroCodeLbl = new Label();
             toolStrip1 = new ToolStrip();
             SelectedAssemblerDdBtn = new ToolStripDropDownButton();
@@ -264,10 +264,10 @@
         private TreeView ProjectTreeView;
         private ToolStripDropDownButton SelectedAssemblerDdBtn;
         private ToolStripButton AssembleBtn;
-        private WASP_huninat.WinForms.CustomControls.RtbWithLineNumbers.UI AssemblyCodeUi;
+        private WASP_huninat.WinForms.CustomControls.RTB.RTBWithLineNumbers AssemblyCodeUi;
         private SplitContainer splitContainer1;
         private SplitContainer splitContainer2;
-        private WASP_huninat.WinForms.CustomControls.RtbWithLineNumbers.UI MicroCodeUi;
+        private WASP_huninat.WinForms.CustomControls.RTB.RTBWithLineNumbers MicroCodeUi;
         private Label MicroCodeLbl;
         private ToolStripButton SaveCurrentFileBtn;
         private Label CurrentProjectLbl;
