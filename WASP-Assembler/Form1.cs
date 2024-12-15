@@ -142,7 +142,8 @@ namespace WASP_Assembler
             string nodePath = Path.Combine(_tempFilePath, RemoveUnicodeIcons(e.Node.FullPath));
             if (File.GetAttributes(nodePath) != FileAttributes.Directory)
             {
-                AssemblyCodeUi.Text = File.ReadAllText(nodePath);
+                AssemblyCodeUi.RTB.Text = File.ReadAllText(nodePath);
+                MicroCodeUi.RTB.Text = "";
 
                 ChangeCurrentSelectedNode(_settings.UiColors[2], e.Node);
             }
@@ -152,7 +153,7 @@ namespace WASP_Assembler
         {
             if (_lastChangedNode != null)
             {
-                File.WriteAllText(Path.Combine(_tempFilePath, RemoveUnicodeIcons(_lastChangedNode.FullPath)), AssemblyCodeUi.Text);
+                File.WriteAllText(Path.Combine(_tempFilePath, RemoveUnicodeIcons(_lastChangedNode.FullPath)), AssemblyCodeUi.RTB.Text);
             }
         }
 
