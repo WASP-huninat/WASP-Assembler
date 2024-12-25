@@ -27,14 +27,7 @@ namespace Logic
                 AssemblyInput[i].Replace("/v", "");
                 string[] splittedAssembly = AssemblyInput[i].Split([' ', '\t'], 2);
                 // Ignoring empty lines and Comments
-                if (splittedAssembly[0] == "" || splittedAssembly[0].StartsWith("//"))
-                {
-                    if (i > 0)
-                    {
-                        OutputString += Environment.NewLine;
-                    }
-                }
-                else
+                if (splittedAssembly[0] != "" && !splittedAssembly[0].StartsWith("//"))
                 {
                     int j = 0;
                     // Search the instruction inside the Selected Assembly .json
@@ -54,10 +47,10 @@ namespace Logic
                             {
                                 string temp = "";
 
-                                for (int k = 0; k < _isaClass.Assembly_Instructions[j].Binary.Length; k++)
-                                {
+                                //for (int k = 0; k < _isaClass.Assembly_Instructions[j].Binary.Length; k++)
+                                //{
                                     
-                                }
+                                //}
 
                                 foreach (var bit in _isaClass.Assembly_Instructions[j].Binary)
                                 {

@@ -28,11 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
-            NewFileLbl = new Label();
-            NewFolderLbl = new Label();
-            DeletLbl = new Label();
             RenameLbl = new Label();
+            NewFileLbl = new Label();
+            DeletLbl = new Label();
+            NewFolderLbl = new Label();
             SuspendLayout();
+            // 
+            // RenameLbl
+            // 
+            RenameLbl.BackColor = Color.FromArgb(64, 64, 64);
+            RenameLbl.Cursor = Cursors.Hand;
+            RenameLbl.Dock = DockStyle.Top;
+            RenameLbl.ForeColor = Color.White;
+            RenameLbl.Location = new Point(1, 91);
+            RenameLbl.Name = "RenameLbl";
+            RenameLbl.Size = new Size(178, 30);
+            RenameLbl.TabIndex = 5;
+            RenameLbl.Text = "   Rename";
+            RenameLbl.TextAlign = ContentAlignment.MiddleLeft;
+            RenameLbl.Click += RenameLbl_Click;
+            RenameLbl.MouseEnter += Lbl_MouseEnter;
+            RenameLbl.MouseLeave += Lbl_MouseLeave;
             // 
             // NewFileLbl
             // 
@@ -52,22 +68,6 @@
             NewFileLbl.MouseEnter += Lbl_MouseEnter;
             NewFileLbl.MouseLeave += Lbl_MouseLeave;
             // 
-            // NewFolderLbl
-            // 
-            NewFolderLbl.BackColor = Color.FromArgb(64, 64, 64);
-            NewFolderLbl.Cursor = Cursors.Hand;
-            NewFolderLbl.Dock = DockStyle.Top;
-            NewFolderLbl.ForeColor = Color.White;
-            NewFolderLbl.Location = new Point(1, 1);
-            NewFolderLbl.Name = "NewFolderLbl";
-            NewFolderLbl.Size = new Size(178, 30);
-            NewFolderLbl.TabIndex = 3;
-            NewFolderLbl.Text = "📁 NewFolder";
-            NewFolderLbl.TextAlign = ContentAlignment.MiddleLeft;
-            NewFolderLbl.Click += NewFolderLbl_Click;
-            NewFolderLbl.MouseEnter += Lbl_MouseEnter;
-            NewFolderLbl.MouseLeave += Lbl_MouseLeave;
-            // 
             // DeletLbl
             // 
             DeletLbl.BackColor = Color.FromArgb(64, 64, 64);
@@ -85,28 +85,28 @@
             DeletLbl.MouseEnter += Lbl_MouseEnter;
             DeletLbl.MouseLeave += Lbl_MouseLeave;
             // 
-            // RenameLbl
+            // NewFolderLbl
             // 
-            RenameLbl.BackColor = Color.FromArgb(64, 64, 64);
-            RenameLbl.Cursor = Cursors.Hand;
-            RenameLbl.Dock = DockStyle.Top;
-            RenameLbl.ForeColor = Color.White;
-            RenameLbl.Location = new Point(1, 91);
-            RenameLbl.Name = "RenameLbl";
-            RenameLbl.Size = new Size(178, 30);
-            RenameLbl.TabIndex = 5;
-            RenameLbl.Text = "   Rename";
-            RenameLbl.TextAlign = ContentAlignment.MiddleLeft;
-            RenameLbl.Click += RenameLbl_Click;
-            RenameLbl.MouseEnter += Lbl_MouseEnter;
-            RenameLbl.MouseLeave += Lbl_MouseLeave;
+            NewFolderLbl.BackColor = Color.FromArgb(64, 64, 64);
+            NewFolderLbl.Cursor = Cursors.Hand;
+            NewFolderLbl.Dock = DockStyle.Top;
+            NewFolderLbl.ForeColor = Color.White;
+            NewFolderLbl.Location = new Point(1, 1);
+            NewFolderLbl.Name = "NewFolderLbl";
+            NewFolderLbl.Size = new Size(178, 30);
+            NewFolderLbl.TabIndex = 3;
+            NewFolderLbl.Text = "📁 NewFolder";
+            NewFolderLbl.TextAlign = ContentAlignment.MiddleLeft;
+            NewFolderLbl.Click += NewFolderLbl_Click;
+            NewFolderLbl.MouseEnter += Lbl_MouseEnter;
+            NewFolderLbl.MouseLeave += Lbl_MouseLeave;
             // 
             // FileDialog
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(180, 122);
+            ClientSize = new Size(180, 353);
             Controls.Add(RenameLbl);
             Controls.Add(DeletLbl);
             Controls.Add(NewFileLbl);
@@ -122,9 +122,10 @@
         }
 
         #endregion
-        private Label NewFileLbl;
-        private Label NewFolderLbl;
-        private Label DeletLbl;
+
         private Label RenameLbl;
+        private Label NewFileLbl;
+        private Label DeletLbl;
+        private Label NewFolderLbl;
     }
 }

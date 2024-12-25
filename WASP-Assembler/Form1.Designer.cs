@@ -29,21 +29,23 @@
         private void InitializeComponent()
         {
             splitContainer1 = new SplitContainer();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            SaveCurrentFileBtn = new Button();
             ProjectTreeView = new TreeView();
             CurrentProjectLbl = new Label();
             splitContainer2 = new SplitContainer();
-            AssemblyCodeUi = new WASP_huninat.WinForms.CustomControls.RTB.RTBWithLineNumbers();
+            AssemblyCodeUi = new WASP_huninat.WinForms.CustomControls.RTB.WithLineNumbers();
             AssemblyCodeLbl = new Label();
-            MicroCodeUi = new WASP_huninat.WinForms.CustomControls.RTB.RTBWithLineNumbers();
+            MicroCodeUi = new WASP_huninat.WinForms.CustomControls.RTB.WithLineNumbers();
             MicroCodeLbl = new Label();
             toolStrip1 = new ToolStrip();
             SelectedAssemblerDdBtn = new ToolStripDropDownButton();
             AssembleBtn = new ToolStripButton();
-            SaveCurrentFileBtn = new ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
             splitContainer2.Panel1.SuspendLayout();
             splitContainer2.Panel2.SuspendLayout();
@@ -61,8 +63,7 @@
             // splitContainer1.Panel1
             // 
             splitContainer1.Panel1.BackColor = Color.Transparent;
-            splitContainer1.Panel1.Controls.Add(ProjectTreeView);
-            splitContainer1.Panel1.Controls.Add(CurrentProjectLbl);
+            splitContainer1.Panel1.Controls.Add(tableLayoutPanel1);
             splitContainer1.Panel1.RightToLeft = RightToLeft.No;
             // 
             // splitContainer1.Panel2
@@ -73,11 +74,45 @@
             splitContainer1.SplitterDistance = 200;
             splitContainer1.TabIndex = 2;
             // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(SaveCurrentFileBtn, 0, 2);
+            tableLayoutPanel1.Controls.Add(ProjectTreeView, 0, 1);
+            tableLayoutPanel1.Controls.Add(CurrentProjectLbl, 0, 0);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Margin = new Padding(0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 3;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 33F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 33F));
+            tableLayoutPanel1.Size = new Size(200, 350);
+            tableLayoutPanel1.TabIndex = 11;
+            // 
+            // SaveCurrentFileBtn
+            // 
+            SaveCurrentFileBtn.BackColor = Color.FromArgb(64, 64, 64);
+            SaveCurrentFileBtn.Dock = DockStyle.Bottom;
+            SaveCurrentFileBtn.FlatAppearance.BorderSize = 0;
+            SaveCurrentFileBtn.FlatStyle = FlatStyle.Flat;
+            SaveCurrentFileBtn.ForeColor = Color.White;
+            SaveCurrentFileBtn.Location = new Point(0, 320);
+            SaveCurrentFileBtn.Margin = new Padding(0);
+            SaveCurrentFileBtn.Name = "SaveCurrentFileBtn";
+            SaveCurrentFileBtn.Size = new Size(200, 30);
+            SaveCurrentFileBtn.TabIndex = 1;
+            SaveCurrentFileBtn.Text = "Save Current File";
+            SaveCurrentFileBtn.UseVisualStyleBackColor = false;
+            SaveCurrentFileBtn.Click += SaveCurrentFileBtn_Click;
+            // 
             // ProjectTreeView
             // 
             ProjectTreeView.BackColor = Color.FromArgb(64, 64, 64);
             ProjectTreeView.BorderStyle = BorderStyle.None;
-            ProjectTreeView.Dock = DockStyle.Bottom;
+            ProjectTreeView.Dock = DockStyle.Fill;
             ProjectTreeView.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             ProjectTreeView.ForeColor = Color.White;
             ProjectTreeView.FullRowSelect = true;
@@ -85,8 +120,9 @@
             ProjectTreeView.ItemHeight = 20;
             ProjectTreeView.LineColor = Color.FromArgb(28, 173, 240);
             ProjectTreeView.Location = new Point(0, 33);
+            ProjectTreeView.Margin = new Padding(0);
             ProjectTreeView.Name = "ProjectTreeView";
-            ProjectTreeView.Size = new Size(200, 317);
+            ProjectTreeView.Size = new Size(200, 284);
             ProjectTreeView.TabIndex = 0;
             ProjectTreeView.AfterLabelEdit += ProjectTreeView_AfterLabelEdit;
             ProjectTreeView.NodeMouseClick += ProjectTreeView_NodeMouseClick;
@@ -101,7 +137,7 @@
             CurrentProjectLbl.Font = new Font("Segoe UI", 9F);
             CurrentProjectLbl.ForeColor = Color.White;
             CurrentProjectLbl.Location = new Point(0, 0);
-            CurrentProjectLbl.Margin = new Padding(3);
+            CurrentProjectLbl.Margin = new Padding(0);
             CurrentProjectLbl.Name = "CurrentProjectLbl";
             CurrentProjectLbl.Size = new Size(200, 30);
             CurrentProjectLbl.TabIndex = 0;
@@ -186,7 +222,7 @@
             toolStrip1.GripMargin = new Padding(0);
             toolStrip1.GripStyle = ToolStripGripStyle.Hidden;
             toolStrip1.ImageScalingSize = new Size(20, 20);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { SelectedAssemblerDdBtn, AssembleBtn, SaveCurrentFileBtn });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { SelectedAssemblerDdBtn, AssembleBtn });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Padding = new Padding(0);
@@ -211,22 +247,12 @@
             AssembleBtn.BackColor = Color.Transparent;
             AssembleBtn.ForeColor = Color.White;
             AssembleBtn.Image = Properties.Resources.Green_Triangle;
-            AssembleBtn.ImageScaling = ToolStripItemImageScaling.None;
             AssembleBtn.ImageTransparentColor = Color.Magenta;
             AssembleBtn.Name = "AssembleBtn";
-            AssembleBtn.Size = new Size(87, 24);
+            AssembleBtn.RightToLeft = RightToLeft.No;
+            AssembleBtn.Size = new Size(97, 24);
             AssembleBtn.Text = "Assemble";
             AssembleBtn.Click += StartAssembleButto_Click;
-            // 
-            // SaveCurrentFileBtn
-            // 
-            SaveCurrentFileBtn.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            SaveCurrentFileBtn.ForeColor = Color.White;
-            SaveCurrentFileBtn.ImageTransparentColor = Color.Magenta;
-            SaveCurrentFileBtn.Name = "SaveCurrentFileBtn";
-            SaveCurrentFileBtn.Size = new Size(123, 24);
-            SaveCurrentFileBtn.Text = "Save Current File";
-            SaveCurrentFileBtn.Click += toolStripButton1_Click;
             // 
             // WASPAssemblerIDE
             // 
@@ -248,6 +274,7 @@
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
             splitContainer2.Panel1.ResumeLayout(false);
             splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
@@ -264,12 +291,13 @@
         private TreeView ProjectTreeView;
         private ToolStripDropDownButton SelectedAssemblerDdBtn;
         private ToolStripButton AssembleBtn;
-        private WASP_huninat.WinForms.CustomControls.RTB.RTBWithLineNumbers AssemblyCodeUi;
+        private WASP_huninat.WinForms.CustomControls.RTB.WithLineNumbers AssemblyCodeUi;
         private SplitContainer splitContainer1;
         private SplitContainer splitContainer2;
-        private WASP_huninat.WinForms.CustomControls.RTB.RTBWithLineNumbers MicroCodeUi;
+        private WASP_huninat.WinForms.CustomControls.RTB.WithLineNumbers MicroCodeUi;
         private Label MicroCodeLbl;
-        private ToolStripButton SaveCurrentFileBtn;
         private Label CurrentProjectLbl;
+        private Button SaveCurrentFileBtn;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }

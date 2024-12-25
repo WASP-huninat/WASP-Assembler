@@ -115,6 +115,8 @@ namespace WASP_Assembler
                     nodeToSelect.EnsureVisible();
                 }
             }
+
+            AssemblyCodeUi.RTB.KeyDown += AssemblyCodeUi_KeyDown;
         }
 
         private void Selected_Assembler_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -149,7 +151,7 @@ namespace WASP_Assembler
             }
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private void SaveCurrentFileBtn_Click(object sender, EventArgs e)
         {
             if (_lastChangedNode != null)
             {
@@ -205,7 +207,6 @@ namespace WASP_Assembler
         private void SetCustomUiHeight()
         {
             int temp = splitContainer2.Panel1.Height - AssemblyCodeLbl.Height - 4;
-            ProjectTreeView.Height = temp;
             AssemblyCodeUi.Height = temp;
             MicroCodeUi.Height = temp;
         }
@@ -237,9 +238,11 @@ namespace WASP_Assembler
                 var t = Path.Combine(_tempFilePath, RemoveUnicodeIcons(e.Node.FullPath));
                 var s = Path.Combine(_tempFilePath, RemoveUnicodeIcons(e.Node.Parent.FullPath), e.Label + Path.GetExtension(e.Node.FullPath));
 
+                var z = Path.GetExtension(e.Node.FullPath);
+
                 try
                 {
-                    if (Path.GetExtension(e.Node.FullPath) != null)
+                    if (Path.GetExtension(e.Node.FullPath) != "")
                     {
                         File.Move(t, s);
                     }
@@ -261,6 +264,22 @@ namespace WASP_Assembler
         private string RemoveUnicodeIcons(string stringToBeRenamed)
         {
             return stringToBeRenamed.Replace("📁 ", "").Replace("🗎 ", "");
+        }
+
+        private void AssemblyCodeUi_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F5)
+            {
+                MicroCodeUi.RTB.Text = _assemblerLogic.ConvertAssemblyToMicrocode(AssemblyCodeUi.RTB.Lines);
+            }
+        }
+
+        private void SaveCurrentFileBtn1_Click(object sender, EventArgs e)
+        {
+            if (_lastChangedNode != null)
+            {
+                File.WriteAllText(Path.Combine(_tempFilePath, RemoveUnicodeIcons(_lastChangedNode.FullPath)), AssemblyCodeUi.RTB.Text);
+            }
         }
     }
 }
