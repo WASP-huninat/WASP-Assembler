@@ -43,19 +43,18 @@ namespace Logic
                             {
                                 OutputString += GenerateMicrocode(splittedAssembly[1].Split(','), _isaClass.Assembly_Instructions[j]);
                             }
+                            else if (splittedAssembly.Length == _isaClass.Assembly_Instructions[j].Parameter_Order.Length)
+                            {
+                                OutputString += "Not enough operators for this instruction";
+                            }
                             else
                             {
                                 string temp = "";
-
-                                //for (int k = 0; k < _isaClass.Assembly_Instructions[j].Binary.Length; k++)
-                                //{
-                                    
-                                //}
-
                                 foreach (var bit in _isaClass.Assembly_Instructions[j].Binary)
                                 {
                                     temp += bit;
                                 }
+
                                 OutputString += temp;
                             }
                             j = _isaClass.Assembly_Instructions.Length + 1;
@@ -77,11 +76,11 @@ namespace Logic
         //  This will convert every operant to its Binary Value
         private string GenerateMicrocode(string[] operants, AssemblerJsonClass.Assembly_Instructions instructionName)
         {
-            if (instructionName.Parameter_Order.Length > operants.Count())
+            if (instructionName.Parameter_Order.Length > operants.Length)
             {
                 return "Not enough operators for this instruction";
             }
-            else if (instructionName.Parameter_Order.Length < operants.Count())
+            else if (instructionName.Parameter_Order.Length < operants.Length)
             {
                 return "Too many operators for this instruction";
             }
