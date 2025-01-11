@@ -105,7 +105,7 @@ namespace WASP_Assembler
 
             if (!string.IsNullOrEmpty(_filePath) && File.Exists(_filePath))
             {
-                AssemblyCodeUi.Text = File.ReadAllText(_filePath);
+                AssemblyCodeUi.RTB.Text = File.ReadAllText(_filePath);
 
                 TreeNode? nodeToSelect = FindNodeByFullPath(ProjectTreeView.Nodes, _filePath);
                 if (nodeToSelect != null)
