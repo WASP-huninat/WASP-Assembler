@@ -110,6 +110,7 @@
             // 
             // ProjectTreeView
             // 
+            ProjectTreeView.AllowDrop = true;
             ProjectTreeView.BackColor = Color.FromArgb(64, 64, 64);
             ProjectTreeView.BorderStyle = BorderStyle.None;
             ProjectTreeView.Dock = DockStyle.Fill;
@@ -127,6 +128,8 @@
             ProjectTreeView.AfterLabelEdit += ProjectTreeView_AfterLabelEdit;
             ProjectTreeView.NodeMouseClick += ProjectTreeView_NodeMouseClick;
             ProjectTreeView.NodeMouseDoubleClick += ProjectTreeView_NodeMouseDoubleClick;
+            ProjectTreeView.DragDrop += ProjectTreeView_DragDrop;
+            ProjectTreeView.DragEnter += ProjectTreeView_DragEnter;
             ProjectTreeView.Leave += ProjectTreeView_Leave;
             ProjectTreeView.MouseClick += ProjectTreeView_MouseClick;
             // 

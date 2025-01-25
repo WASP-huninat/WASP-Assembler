@@ -25,7 +25,8 @@ namespace Logic
             for (int i = 0; i < AssemblyInput.Length; i++)
             {
                 AssemblyInput[i].Replace("/v", "");
-                string[] splittedAssembly = AssemblyInput[i].Split([' ', '\t'], 2);
+                string[] checkForInlineComment = AssemblyInput[i].Split("//");
+                string[] splittedAssembly = checkForInlineComment[0].Split([' ', '\t'], 2);
                 // Ignoring empty lines and Comments
                 if (splittedAssembly[0] != "" && !splittedAssembly[0].StartsWith("//"))
                 {

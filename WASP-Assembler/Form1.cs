@@ -281,5 +281,24 @@ namespace WASP_Assembler
                 File.WriteAllText(Path.Combine(_tempFilePath, RemoveUnicodeIcons(_lastChangedNode.FullPath)), AssemblyCodeUi.RTB.Text);
             }
         }
+
+        private void ProjectTreeView_DragDrop(object sender, DragEventArgs e)
+        {
+
+        }
+
+        private void ProjectTreeView_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+                ProjectTreeView.HotTracking = true;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+                ProjectTreeView.HotTracking = false;
+            }
+        }
     }
 }
