@@ -19,7 +19,29 @@ namespace Logic
             {
                 return "No ISA Selected";
             }
+            if (_isaClass.Label_Convert_To == null)
+            {
+                return "Selected ISA has no\nLabel_Convert_To\nSee the Latest Information for the Content of the ISA.json File\nhttps://github.com/WASP-huninat/WASP-Assembler/wiki/User's-manual";
+            }
+
             string OutputString = "";
+
+            List<Labels> labels = new List<Labels>();
+
+            int currentRow = 0;
+
+            for (int i = 0; i < AssemblyInput.Length; i++)
+            {
+                if (AssemblyInput[i] != "" && !AssemblyInput[i].StartsWith("//"))
+                {
+                    if (AssemblyInput[i].StartsWith('_'))
+                    {
+                        labels.Add(new Labels(AssemblyInput[i], currentRow.ToString()));
+                        currentRow += _isaClass.Label_Convert_To.Additional_Instructions.Count();
+                    }
+                    currentRow++;
+                }
+            }
 
             // Step over every line in the assembly code
             for (int i = 0; i < AssemblyInput.Length; i++)
@@ -28,40 +50,36 @@ namespace Logic
                 string[] checkForInlineComment = AssemblyInput[i].Split("//");
                 string[] splittedAssembly = checkForInlineComment[0].Split([' ', '\t'], 2);
                 // Ignoring empty lines and Comments
-                if (splittedAssembly[0] != "" && !splittedAssembly[0].StartsWith("//"))
+                if (splittedAssembly[0] != "" && !splittedAssembly[0].StartsWith("//") && !splittedAssembly[0].StartsWith('_'))
                 {
-                    int j = 0;
-                    // Search the instruction inside the Selected Assembly .json
-                    for (; j < _isaClass.Assembly_Instructions.Length; j++)
+                    int j = SearchForAssemblyMnemotic(splittedAssembly[0]);
+                    if (j != -1)
                     {
-                        if (splittedAssembly[0].ToUpper() == _isaClass.Assembly_Instructions[j].Assembly_Mnemotic.ToUpper())
+                        if (OutputString.Length > 0)
                         {
-                            if (i > 0)
-                            {
-                                OutputString += Environment.NewLine;
-                            }
-                            if (splittedAssembly.Length != 1)
-                            {
-                                OutputString += GenerateMicrocode(splittedAssembly[1].Split(','), _isaClass.Assembly_Instructions[j]);
-                            }
-                            else if (splittedAssembly.Length == _isaClass.Assembly_Instructions[j].Parameter_Order.Length)
-                            {
-                                OutputString += "Not enough operators for this instruction";
-                            }
-                            else
-                            {
-                                string temp = "";
-                                foreach (var bit in _isaClass.Assembly_Instructions[j].Binary)
-                                {
-                                    temp += bit;
-                                }
-
-                                OutputString += temp;
-                            }
-                            j = _isaClass.Assembly_Instructions.Length + 1;
+                            OutputString += Environment.NewLine;
                         }
+                        if (splittedAssembly.Length != 1)
+                        {
+                            OutputString += GenerateMicrocode(splittedAssembly[1].Split(','), _isaClass.Assembly_Instructions[j], labels);
+                        }
+                        else if (splittedAssembly.Length == _isaClass.Assembly_Instructions[j].Parameter_Order.Length)
+                        {
+                            OutputString += "Not enough operators for this instruction";
+                        }
+                        else
+                        {
+                            string temp = "";
+                            foreach (var bit in _isaClass.Assembly_Instructions[j].Binary)
+                            {
+                                temp += bit;
+                            }
+
+                            OutputString += temp;
+                        }
+                        j = _isaClass.Assembly_Instructions.Length + 1;
                     }
-                    if (j != _isaClass.Assembly_Instructions.Length + 2)
+                    else
                     {
                         if (OutputString.Length > 0)
                         {
@@ -75,8 +93,10 @@ namespace Logic
         }
 
         //  This will convert every operant to its Binary Value
-        private string GenerateMicrocode(string[] operants, AssemblerJsonClass.Assembly_Instructions instructionName)
+        private string GenerateMicrocode(string[] operants, AssemblerJsonClass.Assembly_Instructions instructionName, List<Labels> labels)
         {
+            string temp = "";
+
             if (instructionName.Parameter_Order.Length > operants.Length)
             {
                 return "Not enough operators for this instruction";
@@ -95,6 +115,49 @@ namespace Logic
                 if (operants[i].StartsWith('#'))
                 {
                     operants[i] = ConvertDecimalToBinary(operants[i].Replace("#", ""), parameterBitCount);
+                }
+                else if (operants[i].StartsWith('_'))
+                {
+                    var labelRowNumber = labels.FirstOrDefault(l => l.Name == operants[i]);
+                    if (labelRowNumber != null)
+                    {
+                        int addressBits = _isaClass.Label_Convert_To.Address_Bits;
+
+                        string rowNumberAsBinary = ConvertDecimalToBinary(labelRowNumber.RowNumber, addressBits);
+                        if (_isaClass.Label_Convert_To.Additional_Instructions.Count() != 0)
+                        {
+                            for (int j = 0; j < _isaClass.Label_Convert_To.Additional_Instructions.Count(); j++)
+                            {
+                                string currentAdditionalInstruction = _isaClass.Label_Convert_To.Additional_Instructions[j];
+                                int k = SearchForAssemblyMnemotic(currentAdditionalInstruction);
+
+                                if (k != -1)
+                                {
+                                    int splitIndex = int.Parse(_isaClass.Assembly_Instructions[k].Parameter_Order[0][1..]);
+
+                                    string[] op = { rowNumberAsBinary[..splitIndex] };
+
+                                    temp = GenerateMicrocode(op,
+                                        _isaClass.Assembly_Instructions[k],
+                                        labels) + "\n";
+
+                                    operants[i] = rowNumberAsBinary[splitIndex..];
+                                }
+                                else
+                                {
+                                    return $"Additional_Instruction   {currentAdditionalInstruction.ToUpper()}   not found";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            operants[i] = rowNumberAsBinary;
+                        }
+                    }
+                    else
+                    {
+                        temp = $"Label {operants[0]} not Found\n";
+                    }
                 }
 
                 // Check Length of the parameters with the desired length
@@ -117,7 +180,20 @@ namespace Logic
                     }
                 }
             }
-            return string.Join("", binaryOutput);
+            return temp + string.Join("", binaryOutput);
+        }
+
+        private int SearchForAssemblyMnemotic(string MnemoticToSearch)
+        {
+            int i = 0;
+            for (; i < _isaClass.Assembly_Instructions.Length; i++)
+            {
+                if (_isaClass.Assembly_Instructions[i].Assembly_Mnemotic.ToUpper() == MnemoticToSearch.ToUpper())
+                {
+                    return i++;
+                }
+            }
+            return -1;
         }
 
         private string ConvertDecimalToBinary(string decimalNumber, int bitCount)

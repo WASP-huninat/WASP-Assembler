@@ -70,6 +70,10 @@ namespace WASP_Assembler
 {
 	""Instruction_Bits"": ""16"",
 	""Most_Significant_Bit"": ""left"",
+	""Label_Convert_To"" : {
+			""Address_Bits"": 5,
+			""Additional_Instructions"": [],
+		},
 	""Assembly_Instructions"": [
 		{
 			""Assembly_Mnemotic"": ""NOP"",

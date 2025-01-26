@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             splitContainer1 = new SplitContainer();
             tableLayoutPanel1 = new TableLayoutPanel();
             SaveCurrentFileBtn = new Button();
@@ -41,6 +42,7 @@
             toolStrip1 = new ToolStrip();
             SelectedAssemblerDdBtn = new ToolStripDropDownButton();
             AssembleBtn = new ToolStripButton();
+            errorProvider1 = new ErrorProvider(components);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -51,6 +53,7 @@
             splitContainer2.Panel2.SuspendLayout();
             splitContainer2.SuspendLayout();
             toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)errorProvider1).BeginInit();
             SuspendLayout();
             // 
             // splitContainer1
@@ -257,6 +260,10 @@
             AssembleBtn.Text = "Assemble";
             AssembleBtn.Click += StartAssembleButto_Click;
             // 
+            // errorProvider1
+            // 
+            errorProvider1.ContainerControl = this;
+            // 
             // WASPAssemblerIDE
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -284,6 +291,7 @@
             splitContainer2.ResumeLayout(false);
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)errorProvider1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -302,5 +310,6 @@
         private Label CurrentProjectLbl;
         private Button SaveCurrentFileBtn;
         private TableLayoutPanel tableLayoutPanel1;
+        public ErrorProvider errorProvider1;
     }
 }
