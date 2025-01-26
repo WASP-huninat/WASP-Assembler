@@ -12,7 +12,7 @@ Simply download the latest version .zip, .application and .exe file from the Rel
 Put the .exe, .application and the contents of the .zip file into a folder that should look like this:
 ![grafik.png](https://github.com/user-attachments/assets/d56021a9-f182-402f-9fb2-597224b23aed)
 
-This will install the tool and create a shortcut on the desktop.
+To install the IDE, simply double-click the .exe file. It will also create a desktop shortcut.
 
 ## How to update
 First uninstall the old version and then follow the installation steps.
